@@ -37,7 +37,7 @@ Here's a walkthrough of implemented user stories:
 <img src='https://cloud.githubusercontent.com/assets/17666583/21622680/9682469c-d1b3-11e6-8647-3fa0cfb852b6.png' title='Apply to Position for Job Seeker' width='' alt='Apply to Job Position for Job Seeker' />
 
 ## Notes
-- This app is using Firebase real-time database, and your should run on minimum firebase-database:9.8.0 version. 
+- This app is using Firebase real-time database, and you should run this app on minimum firebase-database:9.8.0 version. 
 - Min api 21.
 
 ## Open-source libraries used
