@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "627089180571",
+    "firebase_url": "https://bluecollar-d6641.firebaseio.com",
+    "project_id": "bluecollar-d6641",
+    "storage_bucket": "bluecollar-d6641.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627089180571:android:60402d7fd89a0def",
+        "android_client_info": {
+          "package_name": "com.example.tuze.bluecollar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "627089180571-65ca4amn5a7k8c1ks1tr7vj1okqflhmn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZpoPnAK_XqhzUVbo1QmY38xQeUPiG-dI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
