@@ -1,6 +1,6 @@
-# Project - *BlueCollarJobs*
+# Project - *JumpIn*
 
-**BlueCollarJobs** Easy to use job search Android app for blue collar workers using visual displays of talent or performance
+**JumpIn** Easy to use job search Android app for blue collar workers using visual displays of talent or performance
 
 ## User Stories
 
@@ -27,5 +27,7 @@ The following **required** functionality is completed:
 - Min api 21.
 
 ## Open-source libraries used
-
-- [Picasso](http://square.github.io/picasso/) - Image loading and caching library for Android
+* [X] [Swipe-Deck](https://github.com/aaronbond/Swipe-Deck) - A Tinder style Swipeable deck view for Android
+* [X] [Picasso](http://square.github.io/picasso/) - Image loading and caching library for Android
+* [X] [CircleImageView](https://github.com/hdodenhof/CircleImageView) - A circular ImageView for Android
+* [X] [Butterknife](https://github.com/JakeWharton/butterknife) - Bind Android views and callbacks to fields and methods.
