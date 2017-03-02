@@ -20,13 +20,15 @@ import com.example.tuze.bluecollar.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by tuze on 12/16/16.
+ * Created by tugce.
  */
 
 public class ApplicantListAdapter extends RecyclerView.Adapter<ApplicantListAdapter.ApplicantViewHolder> {
@@ -84,7 +86,7 @@ public class ApplicantListAdapter extends RecyclerView.Adapter<ApplicantListAdap
         public void onClick(View view) {
             int position = getLayoutPosition(); // gets item position
             Intent intent = new Intent(mContext, ProfileActivity.class);
-            intent.putExtra("User", applicants.get(position));
+            intent.putExtra("User", Parcels.wrap(applicants.get(position)));
             intent.putExtra("ScreenType", "ApplicantProfile");
             mContext.startActivity(intent);
         }

@@ -19,8 +19,10 @@ import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.model.User;
 
+import org.parceler.Parcels;
+
 /**
- * Created by tuze on 12/16/16.
+ * Created by tugce.
  */
 
 public class ComposeMessageFragment extends DialogFragment {
@@ -43,8 +45,8 @@ public class ComposeMessageFragment extends DialogFragment {
         ComposeMessageFragment frag = new ComposeMessageFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putSerializable("User", user);
-        args.putSerializable("Applicant", applicant);
+        args.putParcelable("User", Parcels.wrap(user));
+        args.putParcelable("Applicant", Parcels.wrap(applicant));
         frag.setArguments(args);
         return frag;
     }

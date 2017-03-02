@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.daprlabs.cardstack.SwipeDeck;
@@ -22,6 +23,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +34,7 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     //private RecyclerView rvPositions;
+    private static final String TAG = "HomeActivity";
     @BindView(R.id.swipeDeck)
     SwipeDeck cardStack;
     @BindView(R.id.toolbar)
@@ -55,8 +60,7 @@ public class HomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("");
         getSupportActionBar().setIcon(R.drawable.home_title_red);
 
-        Intent intent = getIntent();
-        user = (User) intent.getSerializableExtra("User");
+        user=(User) Parcels.unwrap(getIntent().getParcelableExtra("User"));
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -104,7 +108,7 @@ public class HomeActivity extends AppCompatActivity
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    Log.e(TAG, "onCancelled", databaseError.toException());
                 }
 
             });
@@ -152,16 +156,16 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            intent = new Intent(this, HomeActivity.class).putExtra("User", user);
+            intent = new Intent(this, HomeActivity.class).putExtra("User", Parcels.wrap(user));
             startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
-            intent = new Intent(this, ProfileActivity.class).putExtra("User", user);
+            intent = new Intent(this, ProfileActivity.class).putExtra("User", Parcels.wrap(user));
             intent.putExtra("ScreenType", "Profile");
             startActivity(intent);
 
         } else if (id == R.id.nav_create_job) {
-            intent = new Intent(this, CreateJobPostActivity.class).putExtra("User", user);
+            intent = new Intent(this, CreateJobPostActivity.class).putExtra("User", Parcels.wrap(user));
             startActivity(intent);
 
         } else if (id == R.id.nav_settings) {

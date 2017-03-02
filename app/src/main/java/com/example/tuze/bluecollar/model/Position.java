@@ -1,9 +1,12 @@
 package com.example.tuze.bluecollar.model;
 
+import org.parceler.Parcel;
+
 /**
- * Created by tuze on 11/25/16.
+ * Created by tugce.
  */
 
+@Parcel
 public class Position {
     private String positionReference;
     private String companyName;
@@ -13,6 +16,9 @@ public class Position {
     private String location;
     private String salary;
     private String imageLink;
+
+    public Position() {
+    }
 
     public void setDeadline(String deadline) {
         this.deadline = deadline;

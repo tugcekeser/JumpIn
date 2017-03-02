@@ -1,13 +1,16 @@
 package com.example.tuze.bluecollar.model;
 
+import org.parceler.Parcel;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by tuze on 11/25/16.
+ * Created by tugce
  */
 
-public class User implements Serializable {
+@Parcel
+public class User {
     private String name;
     private String email;
     private String password;
@@ -20,7 +23,12 @@ public class User implements Serializable {
     private String profileImage;
     private String lookingFor;
 
+    public User() {
+
+    }
+
     private ArrayList<String> appliedPostions;
+
     private ArrayList<String> createdPositions;
 
     public void setName(String name) {

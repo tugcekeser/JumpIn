@@ -26,13 +26,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by tuze on 2/28/17.
+ * Created by tugce.
  */
 
 public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
@@ -124,7 +126,7 @@ public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(mContext, ProfileActivity.class);
-                intent.putExtra("User", applicants.get(position));
+                intent.putExtra("User", Parcels.wrap(applicants.get(position)));
                 intent.putExtra("ScreenType","ApplicantProfile");
                 mContext.startActivity(intent);
             }

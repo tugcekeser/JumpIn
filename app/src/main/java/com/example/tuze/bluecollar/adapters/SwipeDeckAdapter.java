@@ -19,13 +19,15 @@ import com.example.tuze.bluecollar.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by tuze on 2/28/17.
+ * Created by tugce.
  */
 
 public class SwipeDeckAdapter extends BaseAdapter {
@@ -116,7 +118,7 @@ public class SwipeDeckAdapter extends BaseAdapter {
             public void onClick(View view) {
                 final String key = FirebaseDatabase.getInstance().getReference().child("applications").push().getKey();
                 FirebaseDatabase.getInstance().getReference().child("applications").child(key).setValue(application);
-                mContext.startActivity(new Intent(mContext, HomeActivity.class).putExtra("User", user));
+                mContext.startActivity(new Intent(mContext, HomeActivity.class).putExtra("User", Parcels.wrap(user)));
             }
         });
 

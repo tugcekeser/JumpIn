@@ -19,6 +19,8 @@ import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.parceler.Parcels;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -57,8 +59,7 @@ public class CreateJobPostActivity extends AppCompatActivity implements View.OnC
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        user = (User) intent.getSerializableExtra("User");
+        user=(User) Parcels.unwrap(getIntent().getParcelableExtra("User"));
 
         animShake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
         vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -99,7 +100,7 @@ public class CreateJobPostActivity extends AppCompatActivity implements View.OnC
 
         //Save job position in Firebase
         FirebaseDatabase.getInstance().getReference().child("positions").child(key).setValue(position);
-        startActivity(new Intent(CreateJobPostActivity.this, HomeActivity.class).putExtra("User", user));
+        startActivity(new Intent(CreateJobPostActivity.this, HomeActivity.class).putExtra("User", Parcels.wrap(user)));
         finish();
 
     }

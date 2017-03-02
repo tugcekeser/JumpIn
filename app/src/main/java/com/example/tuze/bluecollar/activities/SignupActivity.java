@@ -34,6 +34,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.parceler.Parcels;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -160,7 +162,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                             user.setUserId(key);
                             FirebaseDatabase.getInstance().getReference().child("user").child(key).setValue(user);
 
-                            startActivity(new Intent(SignupActivity.this, HomeActivity.class).putExtra("User", user));
+                            startActivity(new Intent(SignupActivity.this, HomeActivity.class).putExtra("User", Parcels.wrap(user)));
                             finish();
                         }
                     }

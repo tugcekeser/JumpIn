@@ -1,38 +1,32 @@
 package com.example.tuze.bluecollar.activities;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.tuze.bluecollar.R;
-import com.example.tuze.bluecollar.adapters.ApplicantListAdapter;
 import com.example.tuze.bluecollar.adapters.PhotosCardAdapter;
-import com.example.tuze.bluecollar.adapters.PositionsAdapter;
 import com.example.tuze.bluecollar.fragments.ComposeMessageFragment;
-import com.example.tuze.bluecollar.model.Application;
-import com.example.tuze.bluecollar.model.Position;
 import com.example.tuze.bluecollar.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -42,10 +36,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "ProfileActivity";
     private User user;
     private PhotosCardAdapter photosCardAdapter;
-    private ArrayList<Position> positions;
-    private ArrayList<User> applicants;
+    /*private ArrayList<Position> positions;
+    private ArrayList<User> applicants;*/
     private ArrayList<String> photoLinkList;
     private String screenType;
     @BindView(R.id.rvPhotos)
@@ -73,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        user = (User) intent.getSerializableExtra("User");
+        user=(User) Parcels.unwrap(intent.getParcelableExtra("User"));
         getSupportActionBar().setTitle(user.getName());
 
         screenType = intent.getStringExtra("ScreenType");
@@ -103,8 +99,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         tvDescription.setText("\"" + user.getDescription() + "\"");
         tvTitle.setText(user.getTitle() + ", " + user.getAddress());
-        positions = new ArrayList<Position>();
-        applicants = new ArrayList<User>();
+        /*positions = new ArrayList<Position>();
+        applicants = new ArrayList<User>();*/
         photoLinkList = new ArrayList<String>();
 
 
@@ -126,12 +122,10 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.e(TAG, "onCancelled", databaseError.toException());
             }
 
         });
-
-
 
        /* final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         Query query = ref.child("applications").orderByChild("userId").equalTo(user.getEmail());
@@ -157,6 +151,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
+                             Log.e(TAG, "onCancelled", databaseError.toException());
                             }
                         });
                     }
@@ -165,6 +160,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                 Log.e(TAG, "onCancelled", databaseError.toException());
                 }
             });
         }
@@ -200,6 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onCancelled(DatabaseError databaseError) {
+                                             Log.e(TAG, "onCancelled", databaseError.toException());
                                             }
                                         });
 
@@ -209,16 +206,15 @@ public class ProfileActivity extends AppCompatActivity {
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
+                             Log.e(TAG, "onCancelled", databaseError.toException());
                             }
                         });
                     }
-
-
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                 Log.e(TAG, "onCancelled", databaseError.toException());
                 }
 
             });

@@ -28,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.parceler.Parcels;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -97,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         User user = snapshot.getValue(User.class);
-                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class).putExtra("User", user);
+                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class).putExtra("User", Parcels.wrap(user));
                                         startActivity(intent);
                                         finish();
 

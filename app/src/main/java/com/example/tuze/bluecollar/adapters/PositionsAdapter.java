@@ -19,13 +19,15 @@ import com.example.tuze.bluecollar.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by tuze on 12/16/16.
+ * Created by tugce.
  */
 
 public class PositionsAdapter extends RecyclerView.Adapter<PositionsAdapter.PositionViewHolder> {
@@ -119,7 +121,7 @@ public class PositionsAdapter extends RecyclerView.Adapter<PositionsAdapter.Posi
                 public void onClick(View view) {
                     final String key = FirebaseDatabase.getInstance().getReference().child("applications").push().getKey();
                     FirebaseDatabase.getInstance().getReference().child("applications").child(key).setValue(application);
-                    mContext.startActivity(new Intent(mContext, HomeActivity.class).putExtra("User",user));
+                    mContext.startActivity(new Intent(mContext, HomeActivity.class).putExtra("User", Parcels.wrap(user)));
                 }
             });
 
