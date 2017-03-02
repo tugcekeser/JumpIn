@@ -16,6 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.tuze.bluecollar.R;
+import com.example.tuze.bluecollar.constants.AppConstants;
+import com.example.tuze.bluecollar.constants.FirebaseConstants;
 import com.example.tuze.bluecollar.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -92,14 +94,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         } else {
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                            Query query = ref.child("user").orderByChild("email").equalTo(loginInputEmail.getText().toString());
+                            Query query = ref.child(FirebaseConstants.USER).orderByChild(FirebaseConstants.EMAIL).equalTo(loginInputEmail.getText().toString());
 
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         User user = snapshot.getValue(User.class);
-                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class).putExtra("User", Parcels.wrap(user));
+                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user));
                                         startActivity(intent);
                                         finish();
 
@@ -108,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
-                                    Log.e(TAG, "onCancelled", databaseError.toException());
+                                    Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
                                 }
                             });
                         }

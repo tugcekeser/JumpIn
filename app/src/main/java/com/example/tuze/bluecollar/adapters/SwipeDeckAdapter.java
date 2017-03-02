@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.activities.HomeActivity;
+import com.example.tuze.bluecollar.constants.AppConstants;
+import com.example.tuze.bluecollar.constants.FirebaseConstants;
 import com.example.tuze.bluecollar.model.Application;
 import com.example.tuze.bluecollar.model.Position;
 import com.example.tuze.bluecollar.model.User;
@@ -105,7 +107,7 @@ public class SwipeDeckAdapter extends BaseAdapter {
         tvCompanyName.setText(position.getCompanyName());
         tvDeadline.setText(position.getDeadline());
 
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat(AppConstants.SIMPLE_DATE_FORMAT);
         Date date = new Date();
 
         final Application application = new Application();
@@ -116,9 +118,9 @@ public class SwipeDeckAdapter extends BaseAdapter {
         btnApply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String key = FirebaseDatabase.getInstance().getReference().child("applications").push().getKey();
-                FirebaseDatabase.getInstance().getReference().child("applications").child(key).setValue(application);
-                mContext.startActivity(new Intent(mContext, HomeActivity.class).putExtra("User", Parcels.wrap(user)));
+                final String key = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.APPLICATIONS).push().getKey();
+                FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.APPLICATIONS).child(key).setValue(application);
+                mContext.startActivity(new Intent(mContext, HomeActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user)));
             }
         });
 

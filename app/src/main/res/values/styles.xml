@@ -23,7 +23,7 @@
     </style>
 
     <style name="ToolbarItemColor" parent="AppTheme">
-        <item name="android:textColorSecondary"> @color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
     </style>
 
 </resources>

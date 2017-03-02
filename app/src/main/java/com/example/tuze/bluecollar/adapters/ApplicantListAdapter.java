@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.activities.HomeActivity;
 import com.example.tuze.bluecollar.activities.ProfileActivity;
+import com.example.tuze.bluecollar.constants.AppConstants;
 import com.example.tuze.bluecollar.model.Application;
 import com.example.tuze.bluecollar.model.Position;
 import com.example.tuze.bluecollar.model.User;
@@ -86,8 +87,8 @@ public class ApplicantListAdapter extends RecyclerView.Adapter<ApplicantListAdap
         public void onClick(View view) {
             int position = getLayoutPosition(); // gets item position
             Intent intent = new Intent(mContext, ProfileActivity.class);
-            intent.putExtra("User", Parcels.wrap(applicants.get(position)));
-            intent.putExtra("ScreenType", "ApplicantProfile");
+            intent.putExtra(AppConstants.USER, Parcels.wrap(applicants.get(position)));
+            intent.putExtra(AppConstants.SCREEN_TYPE, AppConstants.APPLICANT_PROFILE);
             mContext.startActivity(intent);
         }
 

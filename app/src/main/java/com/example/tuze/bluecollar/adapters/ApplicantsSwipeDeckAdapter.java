@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.activities.HomeActivity;
 import com.example.tuze.bluecollar.activities.ProfileActivity;
+import com.example.tuze.bluecollar.constants.AppConstants;
 import com.example.tuze.bluecollar.model.Application;
 import com.example.tuze.bluecollar.model.Position;
 import com.example.tuze.bluecollar.model.User;
@@ -117,7 +118,7 @@ public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
         });*/
 
         tvTitle.setText(applicants.get(position).getTitle()+", "+applicants.get(position).getAddress());
-        tvLookingFor.setText("Looking for "+applicants.get(position).getLookingFor());
+        tvLookingFor.setText(AppConstants.LOOKING_FOR+applicants.get(position).getLookingFor());
         tvName.setText(applicants.get(position).getName());
         Picasso.with(mContext).load(applicants.get(position).getProfileImage()).placeholder(R.drawable.avatar_user).into(ivUserImage);
 
@@ -126,8 +127,8 @@ public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(mContext, ProfileActivity.class);
-                intent.putExtra("User", Parcels.wrap(applicants.get(position)));
-                intent.putExtra("ScreenType","ApplicantProfile");
+                intent.putExtra(AppConstants.USER, Parcels.wrap(applicants.get(position)));
+                intent.putExtra(AppConstants.SCREEN_TYPE,AppConstants.APPLICANT_PROFILE);
                 mContext.startActivity(intent);
             }
         });

@@ -18,7 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#66000000"
+            android:background="@color/login_screen_transparent_color"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="20dp">

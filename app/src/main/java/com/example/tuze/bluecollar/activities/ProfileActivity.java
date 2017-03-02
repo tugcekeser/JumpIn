@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.adapters.PhotosCardAdapter;
+import com.example.tuze.bluecollar.constants.AppConstants;
+import com.example.tuze.bluecollar.constants.FirebaseConstants;
 import com.example.tuze.bluecollar.fragments.ComposeMessageFragment;
 import com.example.tuze.bluecollar.model.User;
 import com.google.firebase.database.DataSnapshot;
@@ -69,18 +71,18 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        user=(User) Parcels.unwrap(intent.getParcelableExtra("User"));
+        user=(User) Parcels.unwrap(intent.getParcelableExtra(AppConstants.USER));
         getSupportActionBar().setTitle(user.getName());
 
-        screenType = intent.getStringExtra("ScreenType");
+        screenType = intent.getStringExtra(AppConstants.SCREEN_TYPE);
 
-        if (screenType.equals("Profile")) {
+        if (screenType.equals(AppConstants.PROFILE)) {
             fab.setImageDrawable(getResources().getDrawable(R.drawable.edit));
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, "Under the construction...", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Snackbar.make(view, getString(R.string.under_the_construction), Snackbar.LENGTH_LONG)
+                            .setAction(getString(R.string.action), null).show();
                 }
             });
         } else {
@@ -104,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
         photoLinkList = new ArrayList<String>();
 
 
-        final DatabaseReference refPhotos = FirebaseDatabase.getInstance().getReference().child("user").child(user.getUserId()).child("photos");
+        final DatabaseReference refPhotos = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER).child(user.getUserId()).child(FirebaseConstants.PHOTOS);
         refPhotos.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -122,7 +124,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled", databaseError.toException());
+                Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
             }
 
         });
@@ -225,8 +227,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void showEditDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ComposeMessageFragment composeTweetDialogFragment = ComposeMessageFragment.newInstance("Some Title", user, user);
-        composeTweetDialogFragment.show(fm, "fragment_edit_name");
+        ComposeMessageFragment composeTweetDialogFragment = ComposeMessageFragment.newInstance(getString(R.string.message), user, user);
+        composeTweetDialogFragment.show(fm, getString(R.string.message));
     }
 
     @Override

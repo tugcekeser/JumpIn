@@ -14,6 +14,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 
+import com.example.tuze.bluecollar.constants.AppConstants;
+import com.example.tuze.bluecollar.constants.FirebaseConstants;
 import com.example.tuze.bluecollar.model.Position;
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.model.User;
@@ -59,7 +61,7 @@ public class CreateJobPostActivity extends AppCompatActivity implements View.OnC
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        user=(User) Parcels.unwrap(getIntent().getParcelableExtra("User"));
+        user=(User) Parcels.unwrap(getIntent().getParcelableExtra(AppConstants.USER));
 
         animShake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
         vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -87,7 +89,7 @@ public class CreateJobPostActivity extends AppCompatActivity implements View.OnC
             return;
         }
 
-        final String key = FirebaseDatabase.getInstance().getReference().child("positions").push().getKey();
+        final String key = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSITIONS).push().getKey();
         final Position position = new Position();
         position.setCompanyName(user.getName());
         position.setTitle(etJobTitle.getText().toString());
@@ -99,8 +101,8 @@ public class CreateJobPostActivity extends AppCompatActivity implements View.OnC
         position.setPositionReference(key);
 
         //Save job position in Firebase
-        FirebaseDatabase.getInstance().getReference().child("positions").child(key).setValue(position);
-        startActivity(new Intent(CreateJobPostActivity.this, HomeActivity.class).putExtra("User", Parcels.wrap(user)));
+        FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSITIONS).child(key).setValue(position);
+        startActivity(new Intent(CreateJobPostActivity.this, HomeActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user)));
         finish();
 
     }
@@ -110,7 +112,7 @@ public class CreateJobPostActivity extends AppCompatActivity implements View.OnC
         if (etJobTitle.getText().toString().trim().isEmpty()) {
             jobTitleInputLayoutName.setErrorEnabled(true);
             jobTitleInputLayoutName.setError(getString(R.string.err_msg_name));
-            etJobTitle.setError("Job title required");
+            etJobTitle.setError(getString(R.string.job_title_required));
             return false;
         }
         jobTitleInputLayoutName.setErrorEnabled(false);
@@ -122,7 +124,7 @@ public class CreateJobPostActivity extends AppCompatActivity implements View.OnC
 
             locationInputLayoutName.setErrorEnabled(true);
             locationInputLayoutName.setError(getString(R.string.err_msg_name));
-            etLocation.setError("Location required");
+            etLocation.setError(getString(R.string.location_required));
             return false;
         }
         locationInputLayoutName.setErrorEnabled(false);

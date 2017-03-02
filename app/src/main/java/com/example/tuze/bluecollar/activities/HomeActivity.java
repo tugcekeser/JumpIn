@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import com.daprlabs.cardstack.SwipeDeck;
 import com.example.tuze.bluecollar.adapters.ApplicantsSwipeDeckAdapter;
 import com.example.tuze.bluecollar.adapters.SwipeDeckAdapter;
+import com.example.tuze.bluecollar.constants.AppConstants;
+import com.example.tuze.bluecollar.constants.FirebaseConstants;
 import com.example.tuze.bluecollar.model.Position;
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.model.User;
@@ -60,7 +62,7 @@ public class HomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("");
         getSupportActionBar().setIcon(R.drawable.home_title_red);
 
-        user=(User) Parcels.unwrap(getIntent().getParcelableExtra("User"));
+        user=(User) Parcels.unwrap(getIntent().getParcelableExtra(AppConstants.USER));
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -73,7 +75,7 @@ public class HomeActivity extends AppCompatActivity
         jobSeekers = new ArrayList<User>();
 
         if (user.getType() == 1) {
-            DatabaseReference mListItemRef = FirebaseDatabase.getInstance().getReference().child("positions");
+            DatabaseReference mListItemRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSITIONS);
 
             mListItemRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -94,7 +96,7 @@ public class HomeActivity extends AppCompatActivity
             cardStack.setAdapter(positionsAdapter);
 
         } else {
-            DatabaseReference mListItemRef = FirebaseDatabase.getInstance().getReference().child("user");
+            DatabaseReference mListItemRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER);
 
             mListItemRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -108,7 +110,7 @@ public class HomeActivity extends AppCompatActivity
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.e(TAG, "onCancelled", databaseError.toException());
+                    Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
                 }
 
             });
@@ -156,16 +158,16 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            intent = new Intent(this, HomeActivity.class).putExtra("User", Parcels.wrap(user));
+            intent = new Intent(this, HomeActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user));
             startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
-            intent = new Intent(this, ProfileActivity.class).putExtra("User", Parcels.wrap(user));
-            intent.putExtra("ScreenType", "Profile");
+            intent = new Intent(this, ProfileActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user));
+            intent.putExtra(AppConstants.SCREEN_TYPE, AppConstants.PROFILE);
             startActivity(intent);
 
         } else if (id == R.id.nav_create_job) {
-            intent = new Intent(this, CreateJobPostActivity.class).putExtra("User", Parcels.wrap(user));
+            intent = new Intent(this, CreateJobPostActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user));
             startActivity(intent);
 
         } else if (id == R.id.nav_settings) {

@@ -14,9 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.example.tuze.bluecollar.R;
+import com.example.tuze.bluecollar.constants.AppConstants;
 import com.example.tuze.bluecollar.model.User;
 
 import org.parceler.Parcels;
@@ -45,8 +44,8 @@ public class ComposeMessageFragment extends DialogFragment {
         ComposeMessageFragment frag = new ComposeMessageFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putParcelable("User", Parcels.wrap(user));
-        args.putParcelable("Applicant", Parcels.wrap(applicant));
+        args.putParcelable(AppConstants.USER, Parcels.wrap(user));
+        args.putParcelable(AppConstants.APPLICANT, Parcels.wrap(applicant));
         frag.setArguments(args);
         return frag;
     }

@@ -27,6 +27,8 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.tuze.bluecollar.R;
+import com.example.tuze.bluecollar.constants.AppConstants;
+import com.example.tuze.bluecollar.constants.FirebaseConstants;
 import com.example.tuze.bluecollar.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,10 +47,7 @@ import butterknife.ButterKnife;
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 123;
-    private static final String APP_TAG = "my_camera_app";
-    private String mPhotoFileName = "photo.jpg";
-    private static final String TAG = "RegisterActivity";
+    private static final String TAG = "SignUpActivity";
     private Vibrator vib;
     private Animation animShake;
     private FirebaseAuth auth;
@@ -151,30 +150,30 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        Log.d(TAG, getString(R.string.createUserWithEmail_onComplete) + task.isSuccessful());
                         //progressBar.setVisibility(View.GONE);
 
                         if (!task.isSuccessful()) {
-                            Log.d(TAG, "Authentication failed." + task.getException());
+                            Log.d(TAG, getString(R.string.authentication_failed) + task.getException());
 
                         } else {
-                            String key = FirebaseDatabase.getInstance().getReference().child("users").push().getKey();
+                            String key = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).push().getKey();
                             user.setUserId(key);
-                            FirebaseDatabase.getInstance().getReference().child("user").child(key).setValue(user);
+                            FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER).child(key).setValue(user);
 
-                            startActivity(new Intent(SignupActivity.this, HomeActivity.class).putExtra("User", Parcels.wrap(user)));
+                            startActivity(new Intent(SignupActivity.this, HomeActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user)));
                             finish();
                         }
                     }
                 });
-        Toast.makeText(getApplicationContext(), "You are successfully Registered !!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.you_are_successfully_registered), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Uri takenPhotoUri = getPhotoFileUri(mPhotoFileName);
+                Uri takenPhotoUri = getPhotoFileUri(AppConstants.PHOTO_FILE_NAME);
                 Bitmap rotatedBitmap = rotateBitmapOrientation(takenPhotoUri.getPath());
                 Bitmap scaledBitmap = getScaledBitmap(rotatedBitmap);
 
@@ -182,7 +181,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 ivImage.setImageBitmap(scaledBitmap);
 
             } else { // Result was a failure
-                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.picture_wasnt_taken), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -191,11 +190,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public void capturePhoto(View view) {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(mPhotoFileName)); // set the image file name
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(AppConstants.PHOTO_FILE_NAME)); // set the image file name
 
         if (intent.resolveActivity(getPackageManager()) != null) {
             // Start the image capture intent to take photo
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+            startActivityForResult(intent, AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
     }
 
@@ -203,11 +202,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         // Only continue if the SD Card is mounted
         if (isExternalStorageAvailable()) {
             File mediaStorageDir = new File(
-                    getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES), AppConstants.APP_TAG);
 
             // Create the storage directory if it does not exist
             if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-                Log.d(APP_TAG, "failed to create directory");
+                Log.d(AppConstants.APP_TAG, getString(R.string.failed_to_create_directory));
             }
 
             // Return the file target for the photo based on filename
