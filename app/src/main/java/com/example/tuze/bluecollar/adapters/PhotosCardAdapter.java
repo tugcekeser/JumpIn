@@ -49,7 +49,7 @@ public class PhotosCardAdapter extends RecyclerView.Adapter<PhotosCardAdapter.Ph
 
         public PhotosViewHolder(View itemView) {
             super(itemView);
-            ivImage=(ImageView)itemView.findViewById(R.id.ivImage);
+            ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
             ivImage.setImageResource(0);
            /*
             icon.setOnClickListener(this);*/

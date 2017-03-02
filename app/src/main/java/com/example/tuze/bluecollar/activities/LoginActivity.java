@@ -1,3 +1,4 @@
+
 package com.example.tuze.bluecollar.activities;
 
 import android.content.Intent;
@@ -27,78 +28,65 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-public class LoginActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "LoginActivity";
-    private Button btnLogin, btnLinkToSignUp;
-    private ProgressBar progressBar;
-    private FirebaseAuth auth;
-    private EditText loginInputEmail, loginInputPassword;
-    private TextInputLayout loginInputLayoutEmail, loginInputLayoutPassword;
+    @BindView(R.id.btnLogin)
+    Button btnLogin;
+    @BindView(R.id.btnSignup)
+    Button btnSignUp;
+    @BindView(R.id.btnGoogle)
+    Button btnGoogle;
+    @BindView(R.id.loginInputEmail)
+    EditText loginInputEmail;
+    @BindView(R.id.loginInputPassword)
+    EditText loginInputPassword;
+    @BindView(R.id.loginInputLayoutEmail)
+    TextInputLayout loginInputLayoutEmail;
+    @BindView(R.id.loginInputLayoutPassword)
+    TextInputLayout loginInputLayoutPassword;
 
+    //private ProgressBar progressBar;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
         auth = FirebaseAuth.getInstance();
 
-        loginInputLayoutEmail = (TextInputLayout) findViewById(R.id.login_input_layout_email);
-        loginInputLayoutPassword = (TextInputLayout) findViewById(R.id.login_input_layout_password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        loginInputEmail = (EditText) findViewById(R.id.login_input_email);
-        loginInputPassword = (EditText) findViewById(R.id.login_input_password);
-
-        btnLogin = (Button) findViewById(R.id.btn_login);
-        btnLinkToSignUp = (Button) findViewById(R.id.btn_link_signup);
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                submitForm();
-            }
-        });
-
-        btnLinkToSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivity(intent);
-            }
-        });
+        btnLogin.setOnClickListener(this);
+        btnSignUp.setOnClickListener(this);
+        btnGoogle.setOnClickListener(this);
     }
 
-    /**
-     * Validating form
-     */
-    private void submitForm() {
+    /* Validating form */
+    private void loginWithEmailPassword() {
         String email = loginInputEmail.getText().toString().trim();
         String password = loginInputPassword.getText().toString().trim();
 
-        if(!checkEmail()) {
+        if (!checkEmail()) {
             return;
         }
-        if(!checkPassword()) {
+        if (!checkPassword()) {
             return;
         }
         loginInputLayoutEmail.setErrorEnabled(false);
         loginInputLayoutPassword.setErrorEnabled(false);
 
-        progressBar.setVisibility(View.VISIBLE);
         //authenticate user
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        // If sign in fails, Log a message to the LogCat. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        progressBar.setVisibility(View.GONE);
+
                         if (!task.isSuccessful()) {
                             // there was an error
-                             Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
 
                         } else {
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -107,10 +95,9 @@ public class LoginActivity extends AppCompatActivity {
                             query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                                        // appleSnapshot.getRef().ge;
-                                        User user = appleSnapshot.getValue(User.class);
-                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class).putExtra("User",user);
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        User user = snapshot.getValue(User.class);
+                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class).putExtra("User", user);
                                         startActivity(intent);
                                         finish();
 
@@ -129,23 +116,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean checkEmail() {
         String email = loginInputEmail.getText().toString().trim();
-        if (email.isEmpty() || !isEmailValid(email)) {
 
+        if (email.isEmpty() || !isEmailValid(email)) {
             loginInputLayoutEmail.setErrorEnabled(true);
             loginInputLayoutEmail.setError(getString(R.string.err_msg_email));
             loginInputEmail.setError(getString(R.string.err_msg_required));
             requestFocus(loginInputEmail);
             return false;
         }
+
         loginInputLayoutEmail.setErrorEnabled(false);
         return true;
     }
 
     private boolean checkPassword() {
-
         String password = loginInputPassword.getText().toString().trim();
-        if (password.isEmpty() || !isPasswordValid(password)) {
 
+        if (password.isEmpty() || !isPasswordValid(password)) {
             loginInputLayoutPassword.setError(getString(R.string.err_msg_password));
             loginInputPassword.setError(getString(R.string.err_msg_required));
             requestFocus(loginInputPassword);
@@ -159,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private static boolean isPasswordValid(String password){
+    private static boolean isPasswordValid(String password) {
         return (password.length() >= 6);
     }
 
@@ -172,6 +159,20 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        progressBar.setVisibility(View.GONE);
+        //progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.btnSignup) {
+            Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.btnLogin) {
+            loginWithEmailPassword();
+        } else if (id == R.id.btnGoogle) {
+
+        }
     }
 }

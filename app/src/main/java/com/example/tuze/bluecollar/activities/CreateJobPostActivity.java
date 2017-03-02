@@ -19,49 +19,53 @@ import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class CreateJobPostActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class CreateJobPostActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Vibrator vib;
     Animation animShake;
-    private EditText etJobTitle, etDeadline, etLocation, etSalary,etJobDescription;
-    private TextInputLayout job_title_input_layout_name, deadline_input_layout_dob,
-            location_input_layout_name;
     private User user;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.etJobTitle)
+    EditText etJobTitle;
+    @BindView(R.id.etDeadline)
+    EditText etDeadline;
+    @BindView(R.id.etLocation)
+    EditText etLocation;
+    @BindView(R.id.etSalary)
+    EditText etSalary;
+    @BindView(R.id.etJobDescription)
+    EditText etJobDescription;
+    @BindView(R.id.fab)
+    FloatingActionButton btnSaveJob;
+    @BindView(R.id.jobTitleInputLayoutName)
+    TextInputLayout jobTitleInputLayoutName;
+    @BindView(R.id.deadlineInputLayoutDob)
+    TextInputLayout deadlineInputLayoutDob;
+    @BindView(R.id.locationInputLayoutName)
+    TextInputLayout locationInputLayoutName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_job_post);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent=getIntent();
+        Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("User");
-
-        etDeadline=(EditText) findViewById(R.id.etDeadline);
-        etJobTitle=(EditText)findViewById(R.id.etJobTitle);
-        etLocation=(EditText) findViewById(R.id.etLocation);
-        etSalary=(EditText)findViewById(R.id.etSalary);
-        etJobDescription=(EditText) findViewById(R.id.etJobDescription);
-
-        job_title_input_layout_name=(TextInputLayout)findViewById(R.id.job_title_input_layout_name);
-        deadline_input_layout_dob=(TextInputLayout)findViewById(R.id.deadline_input_layout_dob);
-        location_input_layout_name=(TextInputLayout)findViewById(R.id.location_input_layout_name);
 
         animShake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
         vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              saveJobPost();
-            }
-        });
+        btnSaveJob.setOnClickListener(this);
     }
 
-    private void saveJobPost(){
+    private void saveJobPost() {
 
         if (!checkJobTitle()) {
             etJobTitle.setAnimation(animShake);
@@ -83,7 +87,7 @@ public class CreateJobPostActivity extends AppCompatActivity {
         }
 
         final String key = FirebaseDatabase.getInstance().getReference().child("positions").push().getKey();
-        final Position position=new Position();
+        final Position position = new Position();
         position.setCompanyName(user.getName());
         position.setTitle(etJobTitle.getText().toString());
         position.setDeadline(etDeadline.getText().toString());
@@ -93,52 +97,34 @@ public class CreateJobPostActivity extends AppCompatActivity {
         position.setImageLink(user.getProfileImage());
         position.setPositionReference(key);
 
+        //Save job position in Firebase
         FirebaseDatabase.getInstance().getReference().child("positions").child(key).setValue(position);
-
-        /*DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        Query applesQuery = ref.child("users").orderByChild("name").equalTo("Ephesus Restaurant");
-
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                    // appleSnapshot.getRef().ge;
-                    //User person = appleSnapshot.getValue(User.class);
-                    appleSnapshot.getRef().child("positions").child(key).setValue(true);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
-
-        startActivity(new Intent(CreateJobPostActivity.this, HomeActivity.class).putExtra("User",user));
+        startActivity(new Intent(CreateJobPostActivity.this, HomeActivity.class).putExtra("User", user));
         finish();
 
     }
 
     private boolean checkJobTitle() {
-        if (etJobTitle.getText().toString().trim().isEmpty()) {
 
-            job_title_input_layout_name.setErrorEnabled(true);
-            job_title_input_layout_name.setError(getString(R.string.err_msg_name));
+        if (etJobTitle.getText().toString().trim().isEmpty()) {
+            jobTitleInputLayoutName.setErrorEnabled(true);
+            jobTitleInputLayoutName.setError(getString(R.string.err_msg_name));
             etJobTitle.setError("Job title required");
             return false;
         }
-        job_title_input_layout_name.setErrorEnabled(false);
+        jobTitleInputLayoutName.setErrorEnabled(false);
         return true;
     }
 
     private boolean checkLocation() {
         if (etLocation.getText().toString().trim().isEmpty()) {
 
-            location_input_layout_name.setErrorEnabled(true);
-            location_input_layout_name.setError(getString(R.string.err_msg_name));
+            locationInputLayoutName.setErrorEnabled(true);
+            locationInputLayoutName.setError(getString(R.string.err_msg_name));
             etLocation.setError("Location required");
             return false;
         }
-        location_input_layout_name.setErrorEnabled(false);
+        locationInputLayoutName.setErrorEnabled(false);
         return true;
     }
 
@@ -155,13 +141,13 @@ public class CreateJobPostActivity extends AppCompatActivity {
 
             if (etDeadline.getText().toString().trim().isEmpty() && isDateValid) {
 
-                deadline_input_layout_dob.setError(getString(R.string.err_msg_dob));
+                deadlineInputLayoutDob.setError(getString(R.string.err_msg_dob));
                 etDeadline.setError(getString(R.string.err_msg_required));
 
                 return false;
             }
-        }catch(Exception ex){
-            deadline_input_layout_dob.setError(getString(R.string.err_msg_dob));
+        } catch (Exception ex) {
+            deadlineInputLayoutDob.setError(getString(R.string.err_msg_dob));
             return false;
         }
 
@@ -173,9 +159,18 @@ public class CreateJobPostActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (item.getItemId() == android.R.id.home) {
+        if (id == android.R.id.home) {
             this.finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+
+        if (id == R.id.fab) {
+            saveJobPost();
+        }
     }
 }

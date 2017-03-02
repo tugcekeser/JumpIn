@@ -10,11 +10,11 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="card_corner_radius">8dp</dimen>
     <dimen name="card_elevation">8dp</dimen>
-    <dimen name="grid_margin">12dp</dimen>
+    <dimen name="grid_margin">6dp</dimen>
     <dimen name="cell_margin">12dp</dimen>
     <dimen name="keyline_margin">4dp</dimen>
     <dimen name="card_image_height">200dp</dimen>
     <dimen name="md_keylines">8dp</dimen>
-    <dimen name="card_title_height">30dp</dimen>
+    <dimen name="card_title_height">25dp</dimen>
     <dimen name="card_height">240dp</dimen>
 </resources>

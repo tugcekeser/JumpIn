@@ -1,7 +1,9 @@
 package com.example.tuze.bluecollar.activities;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -32,37 +34,51 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ProfileActivity extends AppCompatActivity {
     private User user;
-    private RecyclerView rvApplicationList;
-    private RecyclerView rvPhotos;
     private PhotosCardAdapter photosCardAdapter;
-    private PositionsAdapter adapterPosition;
-    private ApplicantListAdapter adapterApplicant;
     private ArrayList<Position> positions;
     private ArrayList<User> applicants;
     private ArrayList<String> photoLinkList;
     private String screenType;
-
+    @BindView(R.id.rvPhotos)
+    RecyclerView rvPhotos;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tvDescription)
+    TextView tvDescription;
+    @BindView(R.id.ivProfileImage)
+    ImageView ivProfileImage;
+    @BindView(R.id.ivProfileImageSmall)
+    CircleImageView ivProfileImageSmall;
+    @BindView(R.id.tvTitle)
+    TextView tvTitle;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent=getIntent();
+        Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("User");
         getSupportActionBar().setTitle(user.getName());
 
-        screenType=intent.getStringExtra("ScreenType");
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if(screenType.equals("Profile")) {
+        screenType = intent.getStringExtra("ScreenType");
+
+        if (screenType.equals("Profile")) {
             fab.setImageDrawable(getResources().getDrawable(R.drawable.edit));
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -71,42 +87,28 @@ public class ProfileActivity extends AppCompatActivity {
                             .setAction("Action", null).show();
                 }
             });
-        }
-        else {
+        } else {
             fab.setImageDrawable(getResources().getDrawable(R.drawable.contact));
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   showEditDialog();
+                    showEditDialog();
                 }
             });
         }
 
-        TextView tvEmail=(TextView) findViewById(R.id.tvEmail);
-        TextView tvAddress=(TextView)findViewById(R.id.tvAddress);
-        TextView tvDescription=(TextView)findViewById(R.id.tvDescription);
-        ImageView ivProfileImage=(ImageView)findViewById(R.id.ivProfileImage);
-        TextView tvTitle=(TextView)findViewById(R.id.tvTitle);
-        TextView tvLookigFor=(TextView)findViewById(R.id.tvLookingFor);
-        Picasso.with(this).load(user.getProfileImage()).into(ivProfileImage);
-
-        tvEmail.setText(user.getEmail());
-        tvAddress.setText(user.getAddress());
-        tvDescription.setText(user.getDescription());
-        tvLookigFor.setText(user.getLookingFor());
-        tvTitle.setText(user.getTitle());
-
-        rvApplicationList=(RecyclerView)findViewById(R.id.rvApplicationList);
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(this);
-        rvApplicationList.setLayoutManager(linearLayoutManager);
-        rvPhotos=(RecyclerView)findViewById(R.id.rvPhotos);
-        positions=new ArrayList<Position>();
-        applicants=new ArrayList<User>();
-        photoLinkList=new ArrayList<String>();
+        Picasso.with(this).load(user.getProfileImage()).transform(new BlurTransformation(this, 5)).into(ivProfileImage);
+        Picasso.with(this).load(user.getProfileImage()).into(ivProfileImageSmall);
 
 
-        final DatabaseReference refPhotos=FirebaseDatabase.getInstance().getReference().child("user").child(user.getUserId()).child("photos");
+        tvDescription.setText("\"" + user.getDescription() + "\"");
+        tvTitle.setText(user.getTitle() + ", " + user.getAddress());
+        positions = new ArrayList<Position>();
+        applicants = new ArrayList<User>();
+        photoLinkList = new ArrayList<String>();
+
+
+        final DatabaseReference refPhotos = FirebaseDatabase.getInstance().getReference().child("user").child(user.getUserId()).child("photos");
         refPhotos.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -114,10 +116,10 @@ public class ProfileActivity extends AppCompatActivity {
                     String value = postSnapshot.getValue().toString();
                     photoLinkList.add(value);
                 }
-                photosCardAdapter=new PhotosCardAdapter(ProfileActivity.this,photoLinkList);
+                photosCardAdapter = new PhotosCardAdapter(ProfileActivity.this, photoLinkList);
                 rvPhotos.setAdapter(photosCardAdapter);
                 GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(ProfileActivity.this,2);
+                        new GridLayoutManager(ProfileActivity.this, 3);
                 rvPhotos.setLayoutManager(gridLayoutManager);
 
             }
@@ -131,8 +133,8 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-         Query query = ref.child("applications").orderByChild("userId").equalTo(user.getEmail());
+       /* final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        Query query = ref.child("applications").orderByChild("userId").equalTo(user.getEmail());
         if (user.getType()==1) {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -220,21 +222,21 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
             });
-        }
+        }*/
 
 
     }
+
     private void showEditDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ComposeMessageFragment composeTweetDialogFragment = ComposeMessageFragment.newInstance("Some Title",user,user);
+        ComposeMessageFragment composeTweetDialogFragment = ComposeMessageFragment.newInstance("Some Title", user, user);
         composeTweetDialogFragment.show(fm, "fragment_edit_name");
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (item.getItemId() == android.R.id.home) {
+        if (id == android.R.id.home) {
             this.finish();
         }
         return super.onOptionsItemSelected(item);

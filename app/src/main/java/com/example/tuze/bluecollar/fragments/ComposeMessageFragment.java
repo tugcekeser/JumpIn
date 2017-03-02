@@ -24,7 +24,7 @@ import com.example.tuze.bluecollar.model.User;
  */
 
 public class ComposeMessageFragment extends DialogFragment {
-    public static final String TITLE="title";
+    public static final String TITLE = "title";
 
     private EditText etMessage;
     private TextView tvCount;
@@ -43,8 +43,8 @@ public class ComposeMessageFragment extends DialogFragment {
         ComposeMessageFragment frag = new ComposeMessageFragment();
         Bundle args = new Bundle();
         args.putString(TITLE, title);
-        args.putSerializable("User",user);
-        args.putSerializable("Applicant",applicant);
+        args.putSerializable("User", user);
+        args.putSerializable("Applicant", applicant);
         frag.setArguments(args);
         return frag;
     }
@@ -64,9 +64,9 @@ public class ComposeMessageFragment extends DialogFragment {
         etMessage.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        tvCount=(TextView)view.findViewById(R.id.tvCount);
+        tvCount = (TextView) view.findViewById(R.id.tvCount);
         etMessage.addTextChangedListener(textWatcher);
-        btnSend=(Button)view.findViewById(R.id.btnSend);
+        btnSend = (Button) view.findViewById(R.id.btnSend);
         btnSend.setEnabled(false);
 
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +94,7 @@ public class ComposeMessageFragment extends DialogFragment {
 
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"89904.keser@students.itu.edu"});
+                i.putExtra(Intent.EXTRA_EMAIL, new String[]{"89904.keser@students.itu.edu"});
                 i.putExtra(Intent.EXTRA_SUBJECT, "Job Opportunity");
                 i.putExtra(Intent.EXTRA_TEXT, etMessage.getText().toString());
                 try {
@@ -103,7 +103,7 @@ public class ComposeMessageFragment extends DialogFragment {
                     Toast.makeText(getContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
                 }
                 dismiss();
-               // postTweet(etTweet.getText().toString());
+                // postTweet(etTweet.getText().toString());
                 //sendBackResult();
             }
         });
@@ -141,4 +141,5 @@ public class ComposeMessageFragment extends DialogFragment {
                 btnSend.setEnabled(false);
             }
         }
-    };}
+    };
+}

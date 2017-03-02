@@ -37,93 +37,135 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.File;
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class SignupActivity extends AppCompatActivity {
+
+public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
+
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 123;
     private static final String APP_TAG = "my_camera_app";
     private String mPhotoFileName = "photo.jpg";
     private static final String TAG = "RegisterActivity";
     private Vibrator vib;
-    Animation animShake;
-    private EditText signupInputName, signupInputEmail, signupInputPassword, signupInputDOB;
-    private TextInputLayout signupInputLayoutName, signupInputLayoutEmail, signupInputLayoutPassword, signupInputLayoutDOB;
-    private RadioButton rbEmployer, rbJobSeeker;
-    private Button btnSignUp;
+    private Animation animShake;
     private FirebaseAuth auth;
-    private ImageView ivAddPhoto;
-    private ImageView ivImage;
+    @BindView(R.id.signupInputName)
+    EditText signupInputName;
+    @BindView(R.id.signupInputEmail)
+    EditText signupInputEmail;
+    @BindView(R.id.signupInputPassword)
+    EditText signupInputPassword;
+    @BindView(R.id.signupInputDob)
+    EditText signupInputDob;
+    @BindView(R.id.signupInputLayoutName)
+    TextInputLayout signupInputLayoutName;
+    @BindView(R.id.signupInputLayoutEmail)
+    TextInputLayout signupInputLayoutEmail;
+    @BindView(R.id.signupInputLayoutPassword)
+    TextInputLayout signupInputLayoutPassword;
+    @BindView(R.id.signupInputLayoutDob)
+    TextInputLayout signupInputLayoutDOB;
+    @BindView(R.id.rbEmployer)
+    RadioButton rbEmployer;
+    @BindView(R.id.rbJobSeeker)
+    RadioButton rbJobSeeker;
+    @BindView(R.id.btnSignUp)
+    Button btnSignUp;
+    @BindView(R.id.ivAddPhoto)
+    ImageView ivAddPhoto;
+    @BindView(R.id.ivImage)
+    ImageView ivImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        ButterKnife.bind(this);
 
         auth = FirebaseAuth.getInstance();
-
-        signupInputLayoutName = (TextInputLayout) findViewById(R.id.signup_input_layout_name);
-        signupInputLayoutEmail = (TextInputLayout) findViewById(R.id.signup_input_layout_email);
-        signupInputLayoutPassword = (TextInputLayout) findViewById(R.id.signup_input_layout_password);
-        signupInputLayoutDOB = (TextInputLayout) findViewById(R.id.signup_input_layout_dob);
-
-        signupInputName = (EditText) findViewById(R.id.signup_input_name);
-        signupInputEmail = (EditText) findViewById(R.id.signup_input_email);
-        signupInputPassword = (EditText) findViewById(R.id.signup_input_password);
-        signupInputDOB = (EditText) findViewById(R.id.signup_input_dob);
-        btnSignUp = (Button) findViewById(R.id.btn_signup);
-        ivAddPhoto=(ImageView)findViewById(R.id.ivAddPhoto) ;
-        ivImage=(ImageView)findViewById(R.id.ivImage) ;
-
-        rbEmployer=(RadioButton)findViewById(R.id.rbEmployer);
-        rbJobSeeker=(RadioButton)findViewById(R.id.rbJobSeeker);
-
         animShake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
         vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        ivAddPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                capturePhoto(view);
-            }
-        });
-
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                submitForm();
-            }
-        });
+        ivAddPhoto.setOnClickListener(this);
+        btnSignUp.setOnClickListener(this);
     }
 
-    public void capturePhoto(View view){
-        // create Intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(mPhotoFileName)); // set the image file name
-
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.ivAddPhoto) {
+            capturePhoto(view);
+        } else if (id == R.id.btnSignUp) {
+            saveProfile();
         }
     }
-    public Uri getPhotoFileUri(String fileName) {
-        // Only continue if the SD Card is mounted
-        if (isExternalStorageAvailable()) {
-            File mediaStorageDir = new File(
-                    getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
 
-            // Create the storage directory if it does not exist
-            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-                Log.d(APP_TAG, "failed to create directory");
-            }
+    private void saveProfile() {
 
-            // Return the file target for the photo based on filename
-            return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
+        if (!checkName()) {
+            signupInputName.setAnimation(animShake);
+            signupInputName.startAnimation(animShake);
+            vib.vibrate(120);
+            return;
         }
-        return null;
-    }
+        if (!checkEmail()) {
+            signupInputEmail.setAnimation(animShake);
+            signupInputEmail.startAnimation(animShake);
+            vib.vibrate(120);
+            return;
+        }
+        if (!checkPassword()) {
+            signupInputPassword.setAnimation(animShake);
+            signupInputPassword.startAnimation(animShake);
+            vib.vibrate(120);
+            return;
+        }
+        if (!checkDOB()) {
+            signupInputDob.setAnimation(animShake);
+            signupInputDob.startAnimation(animShake);
+            vib.vibrate(120);
+            return;
+        }
 
-    public boolean isExternalStorageAvailable() {
-        String state = Environment.getExternalStorageState();
-        return state.equals(Environment.MEDIA_MOUNTED);
+        final User user = new User();
+        user.setName(signupInputName.getText().toString());
+        user.setEmail(signupInputEmail.getText().toString());
+        user.setDob(signupInputDob.getText().toString());
+        user.setPassword(signupInputPassword.getText().toString());
+
+        if (rbJobSeeker.isChecked() == true)
+            user.setType(1);
+
+        if (rbEmployer.isChecked() == true)
+            user.setType(2);
+
+        signupInputLayoutName.setErrorEnabled(false);
+        signupInputLayoutEmail.setErrorEnabled(false);
+        signupInputLayoutPassword.setErrorEnabled(false);
+        signupInputLayoutDOB.setErrorEnabled(false);
+
+        auth.createUserWithEmailAndPassword(signupInputEmail.getText().toString(), signupInputPassword.getText().toString())
+                .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        //progressBar.setVisibility(View.GONE);
+
+                        if (!task.isSuccessful()) {
+                            Log.d(TAG, "Authentication failed." + task.getException());
+
+                        } else {
+                            String key = FirebaseDatabase.getInstance().getReference().child("users").push().getKey();
+                            user.setUserId(key);
+                            FirebaseDatabase.getInstance().getReference().child("user").child(key).setValue(user);
+
+                            startActivity(new Intent(SignupActivity.this, HomeActivity.class).putExtra("User", user));
+                            finish();
+                        }
+                    }
+                });
+        Toast.makeText(getApplicationContext(), "You are successfully Registered !!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -142,7 +184,42 @@ public class SignupActivity extends AppCompatActivity {
             }
         }
     }
-    public Bitmap getScaledBitmap(Bitmap bitmap){
+
+    /*Take profile photo*/
+    public void capturePhoto(View view) {
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(mPhotoFileName)); // set the image file name
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            // Start the image capture intent to take photo
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    public Uri getPhotoFileUri(String fileName) {
+        // Only continue if the SD Card is mounted
+        if (isExternalStorageAvailable()) {
+            File mediaStorageDir = new File(
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+                Log.d(APP_TAG, "failed to create directory");
+            }
+
+            // Return the file target for the photo based on filename
+            return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
+        }
+        return null;
+    }
+
+    public boolean isExternalStorageAvailable() {
+        String state = Environment.getExternalStorageState();
+        return state.equals(Environment.MEDIA_MOUNTED);
+    }
+
+    public Bitmap getScaledBitmap(Bitmap bitmap) {
         //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, ivPreview.getWidth(), ivPreview.getHeight(), true);
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 400, 200, true);
         return scaledBitmap;
@@ -176,72 +253,8 @@ public class SignupActivity extends AppCompatActivity {
         return rotatedBitmap;
     }
 
-    private void submitForm() {
 
-        if (!checkName()) {
-            signupInputName.setAnimation(animShake);
-            signupInputName.startAnimation(animShake);
-            vib.vibrate(120);
-            return;
-        }
-        if (!checkEmail()) {
-            signupInputEmail.setAnimation(animShake);
-            signupInputEmail.startAnimation(animShake);
-            vib.vibrate(120);
-            return;
-        }
-        if (!checkPassword()) {
-            signupInputPassword.setAnimation(animShake);
-            signupInputPassword.startAnimation(animShake);
-            vib.vibrate(120);
-            return;
-        }
-        if (!checkDOB()) {
-            signupInputDOB.setAnimation(animShake);
-            signupInputDOB.startAnimation(animShake);
-            vib.vibrate(120);
-            return;
-        }
-
-        final User user=new User();
-        user.setName(signupInputName.getText().toString());
-        user.setEmail(signupInputEmail.getText().toString());
-        user.setDob(signupInputDOB.getText().toString());
-        user.setPassword(signupInputPassword.getText().toString());
-        if(rbJobSeeker.isChecked()==true)
-            user.setType(1);
-
-        if(rbEmployer.isChecked()==true)
-            user.setType(2);
-
-        signupInputLayoutName.setErrorEnabled(false);
-        signupInputLayoutEmail.setErrorEnabled(false);
-        signupInputLayoutPassword.setErrorEnabled(false);
-        signupInputLayoutDOB.setErrorEnabled(false);
-
-        auth.createUserWithEmailAndPassword(signupInputEmail.getText().toString(), signupInputPassword.getText().toString())
-                .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG,"createUserWithEmail:onComplete:" + task.isSuccessful());
-                        //progressBar.setVisibility(View.GONE);
-
-                        if (!task.isSuccessful()) {
-                            Log.d(TAG,"Authentication failed." + task.getException());
-
-                        } else {
-                            String key = FirebaseDatabase.getInstance().getReference().child("users").push().getKey();
-                            user.setUserId(key);
-                            FirebaseDatabase.getInstance().getReference().child("user").child(key).setValue(user);
-
-                            startActivity(new Intent(SignupActivity.this, HomeActivity.class).putExtra("User",user));
-                            finish();
-                        }
-                    }
-                });
-        Toast.makeText(getApplicationContext(), "You are successfully Registered !!", Toast.LENGTH_SHORT).show();
-    }
-
+    /* Input Check */
     private boolean checkName() {
         if (signupInputName.getText().toString().trim().isEmpty()) {
 
@@ -283,28 +296,28 @@ public class SignupActivity extends AppCompatActivity {
 
         try {
             boolean isDateValid = false;
-            String[] s = signupInputDOB.getText().toString().split("/");
+            String[] s = signupInputDob.getText().toString().split("/");
             int date = Integer.parseInt(s[1]);
             int month = Integer.parseInt(s[0]);
 
             if (date < 32 && month < 13)
                 isDateValid = true;
 
-            if (signupInputDOB.getText().toString().trim().isEmpty() && isDateValid) {
+            if (signupInputDob.getText().toString().trim().isEmpty() && isDateValid) {
 
                 signupInputLayoutDOB.setError(getString(R.string.err_msg_dob));
-                requestFocus(signupInputDOB);
-                signupInputDOB.setError(getString(R.string.err_msg_required));
+                requestFocus(signupInputDob);
+                signupInputDob.setError(getString(R.string.err_msg_required));
 
                 return false;
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             signupInputLayoutDOB.setError(getString(R.string.err_msg_dob));
-            requestFocus(signupInputDOB);
+            requestFocus(signupInputDob);
             return false;
         }
 
-        signupInputDOB.setError(null);
+        signupInputDob.setError(null);
         return true;
     }
 
@@ -317,4 +330,5 @@ public class SignupActivity extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
+
 }

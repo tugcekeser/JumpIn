@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Created by tuze on 11/25/16.
  */
 
-public class User implements Serializable{
+public class User implements Serializable {
     private String name;
     private String email;
     private String password;

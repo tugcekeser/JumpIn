@@ -72,10 +72,10 @@ public class ApplicantListAdapter extends RecyclerView.Adapter<ApplicantListAdap
 
         public ApplicantViewHolder(View itemView) {
             super(itemView);
-            ivUserImage=(ImageView)itemView.findViewById(R.id.ivUserImage);
-            tvTitle=(TextView) itemView.findViewById(R.id.tvApplicantTitle);
-            tvName=(TextView)itemView.findViewById(R.id.tvApplicantName);
-            tvLocation=(TextView)itemView.findViewById(R.id.tvApplicantLocation);
+            ivUserImage = (ImageView) itemView.findViewById(R.id.ivUserImage);
+            tvTitle = (TextView) itemView.findViewById(R.id.tvApplicantTitle);
+            tvName = (TextView) itemView.findViewById(R.id.tvApplicantName);
+            //tvLocation=(TextView)itemView.findViewById(R.id.tvApplicantLocation);
             itemView.setOnClickListener(this);
         }
 
@@ -83,10 +83,11 @@ public class ApplicantListAdapter extends RecyclerView.Adapter<ApplicantListAdap
         @Override
         public void onClick(View view) {
             int position = getLayoutPosition(); // gets item position
-            Intent intent=new Intent(mContext, ProfileActivity.class);
+            Intent intent = new Intent(mContext, ProfileActivity.class);
             intent.putExtra("User", applicants.get(position));
-            intent.putExtra("ScreenType","ApplicantProfile");
+            intent.putExtra("ScreenType", "ApplicantProfile");
             mContext.startActivity(intent);
         }
 
-    }}
+    }
+}

@@ -19,23 +19,55 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
+            app:collapsedTitleGravity="left"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleGravity="center|bottom"
+            app:expandedTitleTextAppearance="@style/Toolbar.TitleText"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
+                android:id="@+id/ivProfileImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/ivProfileImage"
-                android:src ="@drawable/chef1"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop"
+                android:src="@drawable/chef1" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivProfileImageSmall"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center|top"
+                android:layout_marginTop="10dp"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                android:src="@drawable/chef1"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="3dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_gravity="bottom"
+                android:background="#66000000" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_margin="5dp"
+                android:text="Japaneese Kitchen Chef,San Jose"
+                android:textColor="@android:color/white" />
+
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:titleTextColor="@android:color/black"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                android:titleTextColor="@android:color/black"/>
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>

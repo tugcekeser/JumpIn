@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cvRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/grid_margin"
     android:layout_marginRight="@dimen/grid_margin"
     android:layout_marginTop="@dimen/cell_margin"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="@dimen/card_corner_radius"
-    card_view:cardElevation="@dimen/card_elevation"
-    android:foreground="?android:attr/selectableItemBackground">
+    card_view:cardElevation="@dimen/card_elevation">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,9 +26,9 @@
             tools:src="@drawable/chef1" />
 
         <View
+            android:id="@+id/upcoming_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/upcoming_view"/>
+            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/tvPositionName"
@@ -36,20 +36,21 @@
             android:layout_height="@dimen/card_title_height"
             android:layout_above="@+id/tvCompanyName"
             android:layout_marginLeft="@dimen/md_keylines"
-            tools:text="Palais Garnier"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@android:color/white"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            tools:text="Palais Garnier" />
+
         <TextView
             android:id="@+id/tvCompanyName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/card_title_height"
             android:layout_above="@+id/tvLocation"
             android:layout_marginLeft="@dimen/md_keylines"
-            tools:text="Palais Garnier"
-            android:textSize="16sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            tools:text="Palais Garnier" />
 
         <TextView
             android:id="@+id/tvLocation"
@@ -57,10 +58,10 @@
             android:layout_height="@dimen/card_title_height"
             android:layout_alignBottom="@+id/ivUserImage"
             android:layout_marginLeft="@dimen/md_keylines"
-            tools:text="15 January"
-            android:textSize="16sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            tools:text="15 January" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
