@@ -1,6 +1,7 @@
 package com.example.tuze.bluecollar.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.tuze.bluecollar.R;
+import com.example.tuze.bluecollar.activities.ZoomImageActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -51,13 +53,17 @@ public class PhotosCardAdapter extends RecyclerView.Adapter<PhotosCardAdapter.Ph
             super(itemView);
             ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
             ivImage.setImageResource(0);
+            ivImage.setOnClickListener(this);
            /*
             icon.setOnClickListener(this);*/
         }
 
         @Override
         public void onClick(View view) {
-
+            Intent intent = new Intent(mContext, ZoomImageActivity.class);
+            // Pass data object in the bundle and populate details activity.
+            intent.putExtra("ImageLink", photos.get(getAdapterPosition()));
+            mContext.startActivity(intent);
         }
     }
 

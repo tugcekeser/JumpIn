@@ -3,13 +3,15 @@
     xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/white">
 
     <com.daprlabs.cardstack.SwipeDeck
         android:id="@+id/swipeDeck"
         android:layout_width="match_parent"
-        android:layout_height="480dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="440dp"
+        android:layout_marginTop="80dp"
         android:padding="20dp"
         swipedeck:card_spacing="10dp"
         swipedeck:max_visible="3"
@@ -17,7 +19,7 @@
         swipedeck:rotation_degrees="15" />
 
 
-    <Button
+ <!--   <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
@@ -27,6 +29,50 @@
         android:background="@drawable/home_button_background"
         android:text="FILTER"
         android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold" />
+        android:textStyle="bold" />-->
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_gravity="bottom"
+       android:gravity="center"
+       android:orientation="horizontal">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@mipmap/like"
+        app:rippleColor="@android:color/holo_purple"
+        android:layout_marginBottom="10dp"
+        swipedeck:rippleColor="@android:color/white"
+        swipedeck:fabSize="mini"
+        swipedeck:elevation="15dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabLike"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:src="@mipmap/filter"
+        app:rippleColor="@android:color/holo_purple"
+        android:layout_marginBottom="5dp"
+        swipedeck:backgroundTint="@android:color/holo_purple"
+        swipedeck:rippleColor="@android:color/white"
+        swipedeck:fabSize="normal"
+        swipedeck:elevation="15dp" />
+
+       <android.support.design.widget.FloatingActionButton
+           android:id="@+id/fabDisLike"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:src="@mipmap/dislike"
+           app:rippleColor="@android:color/holo_orange_dark"
+           android:layout_marginBottom="10dp"
+           swipedeck:backgroundTint="@android:color/holo_orange_dark"
+           swipedeck:rippleColor="@android:color/white"
+           swipedeck:elevation="15dp"
+           swipedeck:fabSize="mini" />
+
+   </LinearLayout>
 
 </com.daprlabs.cardstack.SwipeFrameLayout>

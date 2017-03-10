@@ -84,7 +84,10 @@ public class User {
     }
 
     public String getEmail() {
-        return email;
+        if (email != null)
+            return email;
+        else
+            return "";
     }
 
     public int getType() {
@@ -96,19 +99,31 @@ public class User {
     }
 
     public String getDescription() {
-        return description;
+        if (description != null)
+            return description;
+        else
+            return "";
     }
 
     public String getDob() {
-        return dob;
+        if (dob != null)
+            return dob;
+        else
+            return "";
     }
 
     public String getName() {
-        return name;
+        if (name != null)
+            return name;
+        else
+            return "";
     }
 
     public String getPassword() {
-        return password;
+        if (password != null)
+            return password;
+        else
+            return "";
     }
 
     public ArrayList<String> getAppliedPostions() {
@@ -120,7 +135,10 @@ public class User {
     }
 
     public String getTitle() {
-        return title;
+        if (title != null)
+            return title;
+        else
+            return "";
     }
 
     public String getUserId() {
@@ -132,6 +150,9 @@ public class User {
     }
 
     public String getLookingFor() {
-        return lookingFor;
+        if (lookingFor != null)
+            return lookingFor;
+        else
+            return "";
     }
 }

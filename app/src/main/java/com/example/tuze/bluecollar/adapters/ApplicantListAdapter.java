@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,70 +28,49 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by tugce.
  */
 
-public class ApplicantListAdapter extends RecyclerView.Adapter<ApplicantListAdapter.ApplicantViewHolder> {
+public class ApplicantListAdapter extends ArrayAdapter<User> {
+    private Context context;
+    private List<User> applicants;
 
-    ArrayList<User> applicants;
-    User user;
-    Context mContext;
-
-    public ApplicantListAdapter(Context context, ArrayList<User> p, User user) {
-        mContext = context;
-        applicants = p;
-        this.user = user;
+    public ApplicantListAdapter(Context context, List<User> applicants,User user) {
+        super(context, 0, applicants);
+        this.context=context;
+        this.applicants=applicants;
     }
 
     @Override
-    public ApplicantListAdapter.ApplicantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.applicant_item, parent, false);
-        ApplicantListAdapter.ApplicantViewHolder vh = new ApplicantListAdapter.ApplicantViewHolder(view);
-        return vh;
-    }
-
-    @Override
-    public void onBindViewHolder(ApplicantListAdapter.ApplicantViewHolder holder, int position) {
-
-        holder.tvTitle.setText(applicants.get(position).getTitle());
-        holder.tvLocation.setText(applicants.get(position).getAddress());
-        holder.tvName.setText(applicants.get(position).getName());
-        Picasso.with(mContext).load(applicants.get(position).getProfileImage()).placeholder(R.drawable.avatar_user).into(holder.ivUserImage);
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return applicants.size();
-    }
-
-    class ApplicantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView ivUserImage;
-        TextView tvTitle;
-        TextView tvName;
-        TextView tvLocation;
-
-
-        public ApplicantViewHolder(View itemView) {
-            super(itemView);
-            ivUserImage = (ImageView) itemView.findViewById(R.id.ivUserImage);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvApplicantTitle);
-            tvName = (TextView) itemView.findViewById(R.id.tvApplicantName);
-            //tvLocation=(TextView)itemView.findViewById(R.id.tvApplicantLocation);
-            itemView.setOnClickListener(this);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        final User applicant = getItem(position);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_applications, parent, false);
         }
 
+        ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
+        TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
+        TextView tvDescription = (TextView) convertView.findViewById(R.id.tvDescription);
 
-        @Override
-        public void onClick(View view) {
-            int position = getLayoutPosition(); // gets item position
-            Intent intent = new Intent(mContext, ProfileActivity.class);
-            intent.putExtra(AppConstants.USER, Parcels.wrap(applicants.get(position)));
-            intent.putExtra(AppConstants.SCREEN_TYPE, AppConstants.APPLICANT_PROFILE);
-            mContext.startActivity(intent);
-        }
+        tvName.setText(applicant.getName());
+        tvDescription.setText(applicant.getTitle());
 
+        Picasso.with(getContext()).load(applicant.getProfileImage())
+                //.bitmapTransform(new jp.wasabeef.glide.transformations.RoundedCornersTransformation(getContext(),3,3))
+                .into(ivImage);
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(context, ProfileActivity.class);
+                intent.putExtra(AppConstants.USER, Parcels.wrap(applicant));
+                intent.putExtra(AppConstants.SCREEN_TYPE,AppConstants.APPLICANT_PROFILE);
+                context.startActivity(intent);
+            }
+        });
+        return convertView;
     }
 }

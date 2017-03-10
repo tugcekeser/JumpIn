@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,7 +38,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "ProfileActivity";
     private User user;
@@ -60,6 +61,10 @@ public class ProfileActivity extends AppCompatActivity {
     TextView tvTitle;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.btnApplications)
+    Button btnApplications;
+    @BindView(R.id.tvMediaTitle)
+    TextView tvMediaTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(user.getName());
 
         screenType = intent.getStringExtra(AppConstants.SCREEN_TYPE);
+        btnApplications.setOnClickListener(this);
 
         if (screenType.equals(AppConstants.PROFILE)) {
             fab.setImageDrawable(getResources().getDrawable(R.drawable.edit));
@@ -93,6 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
                     showEditDialog();
                 }
             });
+            btnApplications.setVisibility(View.GONE);
         }
 
         Picasso.with(this).load(user.getProfileImage()).transform(new BlurTransformation(this, 5)).into(ivProfileImage);
@@ -101,8 +108,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         tvDescription.setText("\"" + user.getDescription() + "\"");
         tvTitle.setText(user.getTitle() + ", " + user.getAddress());
-        /*positions = new ArrayList<Position>();
-        applicants = new ArrayList<User>();*/
         photoLinkList = new ArrayList<String>();
 
 
@@ -129,98 +134,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
-       /* final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        Query query = ref.child("applications").orderByChild("userId").equalTo(user.getEmail());
-        if (user.getType()==1) {
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                        Application application = userSnapshot.getValue(Application.class);
-                        Query queryPosition = ref.child("positions").orderByChild("positionReference").equalTo(application.getPositionReference());
-
-                        queryPosition.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                                    Position position = userSnapshot.getValue(Position.class);
-                                    positions.add(position);
-                                }
-                                adapterPosition = new PositionsAdapter(ProfileActivity.this, positions, user);
-                                rvApplicationList.setAdapter(adapterPosition);
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                             Log.e(TAG, "onCancelled", databaseError.toException());
-                            }
-                        });
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                 Log.e(TAG, "onCancelled", databaseError.toException());
-                }
-            });
+        if(user.getType()==2){
+            tvMediaTitle.setText("Workplace Images");
         }
-        else {
-
-            DatabaseReference mListItemRef = FirebaseDatabase.getInstance().getReference().child("applications");//.getRef().child("KXQ5mRVEbFxYDPoLtiA");
-            // ArrayList<Application> applicationList=new ArrayList<Application>();
-            mListItemRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        final Application application = postSnapshot.getValue(Application.class);
-                        Query queryPosition = ref.child("positions").orderByChild("positionReference").equalTo(application.getPositionReference());
-                        queryPosition.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                                    Position position = userSnapshot.getValue(Position.class);
-                                    if (position.getCompanyName().equals(user.getName())) {
-
-                                        Query queryUser = ref.child("user").orderByChild("email").equalTo(application.getUserId());
-                                        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                                                    User user = userSnapshot.getValue(User.class);
-                                                    applicants.add(user);
-                                                }
-                                                adapterApplicant = new ApplicantListAdapter(ProfileActivity.this, applicants, user);
-                                                rvApplicationList.setAdapter(adapterApplicant);
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                             Log.e(TAG, "onCancelled", databaseError.toException());
-                                            }
-                                        });
-
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                             Log.e(TAG, "onCancelled", databaseError.toException());
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                 Log.e(TAG, "onCancelled", databaseError.toException());
-                }
-
-            });
-        }*/
 
 
     }
@@ -240,4 +156,16 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onClick(View view) {
+        int id=view.getId();
+        if(id==R.id.btnApplications && user.getType()==1){
+            Intent intent=new Intent(this,ApplicationsActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user));
+            startActivity(intent);
+        }
+        else if(id==R.id.btnApplications && user.getType()==2){
+            Intent intent=new Intent(this,UserCreatedJobsActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user));
+            startActivity(intent);
+        }
+    }
 }

@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_gravity="bottom"
-            android:layout_marginTop="120dp"
+            android:layout_marginTop="200dp"
             android:background="#66000000" />
 
         <TextView

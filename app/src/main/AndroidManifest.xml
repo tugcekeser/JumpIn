@@ -4,15 +4,17 @@
     1
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true"
+        android:hardwareAccelerated="false">
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/app_name"
@@ -24,22 +26,31 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".activities.SignupActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".activities.SignupActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities.CreateJobPostActivity"
             android:label="@string/title_activity_create_job_post"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.UploadImageActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activities.UploadImageActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.ApplicationsActivity" />
+        <activity
+            android:name=".activities.ZoomImageActivity"
+            android:theme="@style/SplashTheme" />
+        <activity android:name=".activities.UserCreatedJobsActivity" />
+        <activity android:name=".activities.ApplicantsActivity"></activity>
     </application>
 
 </manifest>

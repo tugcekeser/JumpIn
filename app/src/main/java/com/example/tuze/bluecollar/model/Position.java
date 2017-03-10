@@ -57,27 +57,45 @@ public class Position {
     }
 
     public String getDescription() {
-        return description;
+        if (description != null)
+            return description;
+        else
+            return "";
     }
 
     public String getLocation() {
-        return location;
+        if (location != null)
+            return location;
+        else
+            return "";
     }
 
     public String getSalary() {
-        return salary;
+        if (salary != null)
+            return salary;
+        else
+            return "";
     }
 
     public String getCompanyName() {
-        return companyName;
+        if (companyName != null)
+            return companyName;
+        else
+            return "";
     }
 
     public String getTitle() {
-        return title;
+        if (title != null)
+            return title;
+        else
+            return "";
     }
 
     public String getPositionReference() {
-        return positionReference;
+        if (positionReference != null)
+            return positionReference;
+        else
+            return "";
     }
 
     public String getImageLink() {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -60,7 +61,12 @@ public class HomeActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-        getSupportActionBar().setIcon(R.drawable.home_title_red);
+       // getSupportActionBar().setIcon(R.mipmap.title);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_homescreen);
+
+        //getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.login_background));
+
 
         user=(User) Parcels.unwrap(getIntent().getParcelableExtra(AppConstants.USER));
 

@@ -27,58 +27,35 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 card_view:cardElevation="@dimen/card_elevation">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:layout_margin="5dp"
+                    android:gravity="center">
 
                     <Button
-                        android:layout_width="match_parent"
+                        android:id="@+id/btnApplications"
+                        android:layout_width="160dp"
                         android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:layout_weight="1"
                         android:background="@drawable/profile_buttons_background"
                         android:text="Applications"
                         android:textColor="@color/colorPrimaryDark" />
 
                     <Button
-                        android:layout_width="match_parent"
+                        android:id="@+id/btnMoreInformation"
+                        android:layout_width="160dp"
                         android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:layout_weight="1"
                         android:background="@drawable/profile_buttons_background"
                         android:text="More Information"
-                        android:textColor="@color/colorPrimaryDark" />
-                </LinearLayout>
+                        android:textColor="@color/colorPrimaryDark"
+                        android:layout_toRightOf="@+id/btnApplications"
+                        android:layout_marginLeft="10dp"/>
+                </RelativeLayout>
 
             </android.support.v7.widget.CardView>
         </LinearLayout>
 
-
-        <!--  <LinearLayout
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:orientation="horizontal"
-         android:layout_marginLeft="15dp"
-         android:layout_marginRight="15dp"
-         android:layout_marginTop="15dp">
-
-     <TextView
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_margin="5dp"
-         android:text="Email"
-         android:textStyle="bold"/>
-
-         <TextView
-             android:id="@+id/tvEmail"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_margin="5dp"
-             android:text="Ephesus Restaurant" />
-
-     </LinearLayout>-->
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -97,28 +74,6 @@
                 android:text="Hardworking, flexible work hours, experienced"
                 android:textSize="16sp"
                 android:textStyle="italic" />
-
-            <!--   <LinearLayout
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:orientation="horizontal"
-                   android:layout_marginLeft="15dp"
-                   android:layout_marginRight="15dp">
-
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_margin="5dp"
-                       android:text="Looking for"
-                       android:textStyle="bold"/>
-
-                   <TextView
-                       android:id="@+id/tvLookingFor"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_margin="5dp"
-                       android:text="Full-time job opportunities"/>
-               </LinearLayout>-->
 
             <TextView
                 android:id="@+id/tvMediaTitle"

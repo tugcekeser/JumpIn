@@ -29,11 +29,17 @@ public class Application {
     }
 
     public String getPositionReference() {
-        return positionReference;
+        if (positionReference != null)
+            return positionReference;
+        else
+            return "";
     }
 
     public String getApplicationDate() {
-        return applicationDate;
+        if (applicationDate != null)
+            return applicationDate;
+        else
+            return "";
     }
 
     public String getUserId() {
