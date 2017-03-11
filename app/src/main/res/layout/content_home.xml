@@ -74,7 +74,7 @@
            swipedeck:fabSize="mini" />
 
    </LinearLayout>-->
-    <RelativeLayout
+ <!--   <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <android.support.design.widget.FloatingActionButton
@@ -90,5 +90,5 @@
         swipedeck:elevation="15dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
-    </RelativeLayout>
+    </RelativeLayout> -->
 </com.daprlabs.cardstack.SwipeFrameLayout>

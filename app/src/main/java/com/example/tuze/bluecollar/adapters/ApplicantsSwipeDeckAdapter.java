@@ -43,10 +43,12 @@ import java.util.Iterator;
  */
 
 public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
+    private static final String TAG = "ApplicantsSDeckAdapter";
 
     ArrayList<User> applicants;
     User user;
     Context mContext;
+    PhotosCardAdapter photosCardAdapter;
 
     public ApplicantsSwipeDeckAdapter(Context context, ArrayList<User> p, User user) {
         mContext = context;
@@ -54,6 +56,14 @@ public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
         this.user = user;
     }
 
+    private static class ViewHolderApplicant {
+        ImageView ivUserImage;
+        TextView tvTitle;
+        TextView tvName;
+        TextView tvLookingFor;
+        RecyclerView rvPhotos;
+
+    }
     @Override
     public int getCount() {
         return applicants.size();
@@ -73,38 +83,35 @@ public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(R.layout.applicant_item, parent, false);
-
-        ImageView ivUserImage = (ImageView) convertView.findViewById(R.id.ivUserImage);
-        TextView tvTitle=(TextView) convertView.findViewById(R.id.tvApplicantTitle);
-        TextView tvName=(TextView)convertView.findViewById(R.id.tvApplicantName);
-        TextView tvLookingFor=(TextView)convertView.findViewById(R.id.tvLookingFor);
-        final RecyclerView rvPhotos=(RecyclerView)convertView.findViewById(R.id.rvPhotos);
+        final ViewHolderApplicant holder=new ViewHolderApplicant();
         final ArrayList<String> photoLinkList=new ArrayList<String>();
 
+        holder.ivUserImage = (ImageView) convertView.findViewById(R.id.ivUserImage);
+        holder.tvTitle=(TextView) convertView.findViewById(R.id.tvApplicantTitle);
+        holder.tvName=(TextView)convertView.findViewById(R.id.tvApplicantName);
+        holder.tvLookingFor=(TextView)convertView.findViewById(R.id.tvLookingFor);
+        holder.rvPhotos=(RecyclerView)convertView.findViewById(R.id.rvPhotos);
 
-        Query queryPosition = FirebaseDatabase.getInstance().getReference().child("user").orderByChild("name").equalTo(applicants.get(position).getName());
+        Query queryPosition = FirebaseDatabase.getInstance().getReference().child("user").orderByChild("userId").equalTo(applicants.get(position).getUserId());
         queryPosition.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                    Iterable<DataSnapshot> snapshots=dataSnapshot.child("photos").getChildren();
-                    Iterator<DataSnapshot> iterator=snapshots.iterator();
-                    while(iterator.hasNext()){
-                        String link=iterator.next().getValue().toString();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for(DataSnapshot dSnapshot: snapshot.child("photos").getChildren()){
+                        String link=dSnapshot.getValue().toString();
                         photoLinkList.add(link);
-
                     }
-
-                PhotosCardAdapter photosCardAdapter=new PhotosCardAdapter(mContext,photoLinkList);
-                rvPhotos.setAdapter(photosCardAdapter);
-                GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(mContext,4);
-                rvPhotos.setLayoutManager(gridLayoutManager);
-
+                    GridLayoutManager gridLayoutManager =
+                            new GridLayoutManager(mContext,4);
+                    holder.rvPhotos.setLayoutManager(gridLayoutManager);
+                    photosCardAdapter=new PhotosCardAdapter(mContext,photoLinkList);
+                    holder.rvPhotos.setAdapter(photosCardAdapter);
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                //Log.e(TAG, "onCancelled", databaseError.toException());
+                Log.e(TAG, "onCancelled", databaseError.toException());
             }
         });
 
@@ -118,37 +125,10 @@ public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
         photoLinkList.add("https://s20.postimg.org/8ldauw8fx/d11.jpg");
         photoLinkList.add("https://s20.postimg.org/d5zh9ts59/d12.jpg");*/
 
-
-
-
-
-        /*final DatabaseReference refPhotos=FirebaseDatabase.getInstance().getReference().child("user").child(applicants.get(position).getUserId()).child("photos");
-        refPhotos.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    String value = postSnapshot.getValue().toString();
-                    photoLinkList.add(value);
-                }
-                PhotosCardAdapter photosCardAdapter=new PhotosCardAdapter(mContext,photoLinkList);
-                rvPhotos.setAdapter(photosCardAdapter);
-                GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(mContext,3);
-                rvPhotos.setLayoutManager(gridLayoutManager);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-        });*/
-
-        tvTitle.setText(applicants.get(position).getTitle()+", "+applicants.get(position).getAddress());
-        tvLookingFor.setText(AppConstants.LOOKING_FOR+applicants.get(position).getLookingFor());
-        tvName.setText(applicants.get(position).getName());
-        Picasso.with(mContext).load(applicants.get(position).getProfileImage()).placeholder(R.drawable.avatar_user).into(ivUserImage);
+        holder.tvTitle.setText(applicants.get(position).getTitle()+", "+applicants.get(position).getAddress());
+        holder.tvLookingFor.setText(AppConstants.LOOKING_FOR+applicants.get(position).getLookingFor());
+        holder.tvName.setText(applicants.get(position).getName());
+        Picasso.with(mContext).load(applicants.get(position).getProfileImage()).placeholder(R.drawable.avatar_user).into(holder.ivUserImage);
 
 
         convertView.setOnClickListener(new View.OnClickListener() {

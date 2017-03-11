@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
+
 import java.util.List;
 
 /**
@@ -42,35 +43,47 @@ public class ApplicantListAdapter extends ArrayAdapter<User> {
         this.applicants = applicants;
         this.applications = applications;
     }
+    private static class ViewHolderApplicant{
+        ImageView ivImage;
+        TextView tvName;
+        TextView tvDescription;
+        Spinner sStatus;
+        ImageButton btnView;
+    }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final User applicant = getItem(position);
+        final ViewHolderApplicant holder=new ViewHolderApplicant();
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_applications, parent, false);
         }
 
-        ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
-        TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
-        TextView tvDescription = (TextView) convertView.findViewById(R.id.tvDescription);
-        final Spinner sStatus = (Spinner) convertView.findViewById(R.id.sJobStatus);
-        ImageButton btnView = (ImageButton) convertView.findViewById(R.id.btnView);
+        holder.ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
+        holder.tvName = (TextView) convertView.findViewById(R.id.tvName);
+        holder.tvDescription = (TextView) convertView.findViewById(R.id.tvDescription);
+        holder.sStatus = (Spinner) convertView.findViewById(R.id.sJobStatus);
+        holder.btnView = (ImageButton) convertView.findViewById(R.id.btnView);
 
-        tvName.setText(applicant.getName());
-        tvDescription.setText(applicant.getTitle());
-        btnView.setVisibility(View.GONE);
+        holder.tvName.setText(applicant.getName());
+        holder.tvDescription.setText(applicant.getTitle());
+        holder.btnView.setVisibility(View.GONE);
 
         ArrayAdapter adapter = ArrayAdapter.createFromResource(context, R.array.Status, android.R.layout.simple_list_item_1);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        sStatus.setAdapter(adapter);
-        sStatus.setSelection(applications.get(position).getStatus()-1);
+        if (applications.size() > 0) {
+            holder.sStatus.setAdapter(adapter);
+            holder.sStatus.setSelection(applications.get(position).getStatus() - 1);
+        } else
+            holder.sStatus.setVisibility(View.GONE);
 
-        sStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        holder.sStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int arg2, long arg3) {
 
-                String selection = sStatus.getSelectedItem().toString();
+                String selection = holder.sStatus.getSelectedItem().toString();
                 /*Update db*/
                 int statusCode = JobStatus.getStatusCode(selection);
                 FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.APPLICATIONS)
@@ -79,14 +92,14 @@ public class ApplicantListAdapter extends ArrayAdapter<User> {
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                String selection = sStatus.getSelectedItem().toString();
+                String selection = holder.sStatus.getSelectedItem().toString();
                 Toast.makeText(context, "Try Again " + selection, Toast.LENGTH_LONG).show();
             }
         });
 
         Picasso.with(getContext()).load(applicant.getProfileImage())
                 //.bitmapTransform(new jp.wasabeef.glide.transformations.RoundedCornersTransformation(getContext(),3,3))
-                .into(ivImage);
+                .into(holder.ivImage);
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override

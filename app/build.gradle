@@ -46,4 +46,5 @@ dependencies {
     compile 'com.daprlabs.aaron:cardstack:0.3.1-beta0'
     compile 'org.parceler:parceler-api:1.1.6'
     annotationProcessor 'org.parceler:parceler:1.1.6'
+    compile fileTree(dir: 'libs', include: 'slider.jar')
 }

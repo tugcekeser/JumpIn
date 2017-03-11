@@ -13,9 +13,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daprlabs.cardstack.SwipeDeck;
+import com.example.tuze.bluecollar.adapters.ApplicantListAdapter;
 import com.example.tuze.bluecollar.adapters.ApplicantsSwipeDeckAdapter;
 import com.example.tuze.bluecollar.adapters.ApplicationsAdapter;
 import com.example.tuze.bluecollar.adapters.SwipeDeckAdapter;
@@ -32,11 +34,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.navdrawer.SimpleSideDrawer;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,6 +58,7 @@ public class HomeActivity extends AppCompatActivity
     DrawerLayout drawer;
     @BindView(R.id.navView)
     NavigationView navigationView;
+    ListView lvSavedItems;
     CircleImageView ivProfile;
     TextView tvName;
     TextView tvEmail;
@@ -61,6 +66,7 @@ public class HomeActivity extends AppCompatActivity
     TextView tvApplicationsCount;
     TextView tvApplications;
     TextView tvSavedJobsApplicants;
+    private SimpleSideDrawer rightDrawer;
     private SwipeDeckAdapter positionsAdapter;
     private ApplicantsSwipeDeckAdapter jobSeekerAdapter;
     private ArrayList<Position> positions;
@@ -90,9 +96,13 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        rightDrawer = new SimpleSideDrawer(this);
+        rightDrawer.setRightBehindContentView(R.layout.saved_item_list);
+        lvSavedItems = (ListView) findViewById(R.id.lvSavedItems);
+
         //Set header views
-        View header=navigationView.getHeaderView(0);
-        setViews(header,user);
+        View header = navigationView.getHeaderView(0);
+        setViews(header, user);
 
         if (user.getType() == 1) {
             navigationView.inflateMenu(R.menu.job_seeker_menu);
@@ -140,21 +150,58 @@ public class HomeActivity extends AppCompatActivity
             cardStack.setAdapter(jobSeekerAdapter);
 
         }
+        cardStack.setEventCallback(new SwipeDeck.SwipeEventCallback() {
+            @Override
+            public void cardSwipedLeft(int position) {
+                Log.i("MainActivity", "card was swiped left, position in adapter: " + position);
+            }
+
+            @Override
+            public void cardSwipedRight(int position) {
+                if (user.getType() == 1) {
+                    String key = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER)
+                            .child(user.getUserId()).child("savedJobs").push().getKey();
+                    FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER)
+                            .child(user.getUserId()).child("savedJobs").child(key).setValue(positions.get(position).getPositionReference());
+                } else {
+                    String key = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER)
+                            .child(user.getUserId()).child("savedApplicants").push().getKey();
+                    FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER)
+                            .child(user.getUserId()).child("savedApplicants").child(key).setValue(jobSeekers.get(position).getUserId());
+                }
+                Log.i("MainActivity", "card was swiped right, position in adapter: " + position);
+            }
+
+            @Override
+            public void cardsDepleted() {
+                Log.i("MainActivity", "no more cards");
+            }
+
+            @Override
+            public void cardActionDown() {
+                Log.i("MainActivity", "card was swiped down, position in adapter: ");
+            }
+
+            @Override
+            public void cardActionUp() {
+                Log.i("MainActivity", "card was swiped up, position in adapter: ");
+            }
+        });
     }
 
-    private void setViews(View header,final User user){
-        ivProfile=(CircleImageView)header.findViewById(R.id.ivProfile);
-        tvName=(TextView)header.findViewById(R.id.tvName);
-        tvEmail=(TextView)header.findViewById(R.id.tvEmail);
-        tvApplicationsCount=(TextView)header.findViewById(R.id.tvApplicationsCount);
-        tvApplications=(TextView)header.findViewById(R.id.tvApplications);
-        tvSavedJobsApplicants=(TextView)header.findViewById(R.id.tvSavedJobsApplicants);
-        tvSavedJobsApplicantsCount=(TextView) header.findViewById(R.id.tvSavedJobsApplicantsCount);
+    private void setViews(View header, final User user) {
+        ivProfile = (CircleImageView) header.findViewById(R.id.ivProfile);
+        tvName = (TextView) header.findViewById(R.id.tvName);
+        tvEmail = (TextView) header.findViewById(R.id.tvEmail);
+        tvApplicationsCount = (TextView) header.findViewById(R.id.tvApplicationsCount);
+        tvApplications = (TextView) header.findViewById(R.id.tvApplications);
+        tvSavedJobsApplicants = (TextView) header.findViewById(R.id.tvSavedJobsApplicants);
+        tvSavedJobsApplicantsCount = (TextView) header.findViewById(R.id.tvSavedJobsApplicantsCount);
 
         Picasso.with(this).load(user.getProfileImage()).into(ivProfile);
         tvName.setText(user.getName());
         tvEmail.setText(user.getEmail());
-        if(user.getType()==1) {
+        if (user.getType() == 1) {
             tvSavedJobsApplicants.setText("Saved Jobs");
             tvApplications.setText("My Applications");
 
@@ -163,7 +210,7 @@ public class HomeActivity extends AppCompatActivity
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    final ArrayList<Position> positions=new ArrayList<Position>();
+                    final ArrayList<Position> positions = new ArrayList<Position>();
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         Application application = userSnapshot.getValue(Application.class);
                         Query queryPosition = ref.child("positions").orderByChild("positionReference").equalTo(application.getPositionReference());
@@ -176,7 +223,7 @@ public class HomeActivity extends AppCompatActivity
                                     Position position = userSnapshot.getValue(Position.class);
                                     positions.add(position);
                                 }
-                                tvApplicationsCount.setText(""+positions.size());
+                                tvApplicationsCount.setText("" + positions.size());
                             }
 
                             @Override
@@ -193,8 +240,7 @@ public class HomeActivity extends AppCompatActivity
                     Log.e(TAG, "onCancelled", databaseError.toException());
                 }
             });
-        }
-        else{
+        } else {
             tvSavedJobsApplicants.setText("Saved Applicants");
             tvApplications.setText("Created Jobs");
             final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -202,7 +248,7 @@ public class HomeActivity extends AppCompatActivity
             queryPosition.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                   ArrayList<Position> positions=new ArrayList<Position>();
+                    ArrayList<Position> positions = new ArrayList<Position>();
 
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
 
@@ -211,7 +257,7 @@ public class HomeActivity extends AppCompatActivity
                             positions.add(position);
                         }
                     }
-                    tvApplicationsCount.setText(""+positions.size());
+                    tvApplicationsCount.setText("" + positions.size());
 
                 }
 
@@ -247,7 +293,93 @@ public class HomeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_list) {
+            if (user.getType() == 1) {
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                final List<Position> positions = new ArrayList<Position>();
+
+
+                Query query = ref.child(FirebaseConstants.USER).orderByChild("userId").equalTo(user.getUserId());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            for (DataSnapshot dSnapshot : snapshot.child("savedJobs").getChildren()) {
+
+                                Query query = ref.child(FirebaseConstants.POSITIONS).orderByChild("positionReference").equalTo(dSnapshot.getValue().toString());
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            Position position = snapshot.getValue(Position.class);
+                                            positions.add(position);
+                                        }
+                                        ApplicationsAdapter adapter = new ApplicationsAdapter(HomeActivity.this, positions, user);
+                                        lvSavedItems.setAdapter(adapter);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
+                                    }
+                                });
+                            }
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
+                    }
+                });
+            }
+            else if(user.getType()==2){
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                final List<User> applicants = new ArrayList<User>();
+
+
+                Query query = ref.child(FirebaseConstants.USER).orderByChild("email").equalTo(user.getEmail());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            for (DataSnapshot dSnapshot : snapshot.child("savedApplicants").getChildren()) {
+
+                                Query query2 = ref.child(FirebaseConstants.USER).orderByChild("userId").equalTo(dSnapshot.getValue().toString());
+                                query2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            User applicant = snapshot.getValue(User.class);
+                                            applicants.add(applicant);
+                                        }
+                                        ApplicantListAdapter adapter = new ApplicantListAdapter(HomeActivity.this, applicants, user, new ArrayList<Application>());
+                                        lvSavedItems.setAdapter(adapter);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
+                                    }
+                                });
+                            }
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
+                    }
+                });
+            }
+
+
+            rightDrawer.toggleRightDrawer();
+
             return true;
         }
 
