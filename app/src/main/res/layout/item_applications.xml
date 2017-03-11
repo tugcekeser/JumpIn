@@ -43,9 +43,21 @@
     <ImageButton
         android:layout_width="50dp"
         android:layout_height="30dp"
-        android:id="@+id/btnFriend"
+        android:id="@+id/btnView"
         android:src="@mipmap/show"
         android:background="@null"
         android:layout_alignTop="@+id/tvName"
         android:layout_alignParentRight="true" />
+
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sJobStatus"
+        android:drawSelectorOnTop="true"
+        android:layout_alignBottom="@+id/ivImage"
+        android:layout_alignTop="@+id/tvName"
+        android:layout_alignParentRight="true" />
+
+
 </RelativeLayout>

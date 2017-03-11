@@ -38,6 +38,7 @@ public class ApplicantsActivity extends AppCompatActivity {
     List<User> applicants;
     User user;
     Position position;
+    List<Application> applications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,7 @@ public class ApplicantsActivity extends AppCompatActivity {
         position = (Position) Parcels.unwrap(intent.getParcelableExtra("Position"));
 
         applicants = new ArrayList<User>();
+        applications=new ArrayList<Application>();
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         Query queryPosition = ref.child("applications").orderByChild("positionReference").equalTo(position.getPositionReference());
@@ -61,6 +63,7 @@ public class ApplicantsActivity extends AppCompatActivity {
 
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     Application application = userSnapshot.getValue(Application.class);
+                    applications.add(application);
                     Query queryUser = ref.child("user").orderByChild("email").equalTo(application.getUserId());
                     queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -69,7 +72,7 @@ public class ApplicantsActivity extends AppCompatActivity {
                                 User user = userSnapshot.getValue(User.class);
                                 applicants.add(user);
                             }
-                            adapter = new ApplicantListAdapter(ApplicantsActivity.this, applicants, user);
+                            adapter = new ApplicantListAdapter(ApplicantsActivity.this, applicants, user,applications);
                             lvApplicantsList.setAdapter(adapter);
 
                         }

@@ -61,7 +61,7 @@ public class UserCreatedJobsActivity extends AppCompatActivity {
 
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     Position position = userSnapshot.getValue(Position.class);
-                    if (position.getCompanyName().equals(user.getName()) && !applications.contains(position)) {
+                    if (position.getCompanyName().equals(user.getName())) {
                         applications.add(position);
                     }
                 }

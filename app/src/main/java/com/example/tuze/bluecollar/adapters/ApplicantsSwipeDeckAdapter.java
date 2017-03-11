@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.activities.HomeActivity;
 import com.example.tuze.bluecollar.activities.ProfileActivity;
+import com.example.tuze.bluecollar.activities.UserCreatedJobsActivity;
 import com.example.tuze.bluecollar.constants.AppConstants;
 import com.example.tuze.bluecollar.model.Application;
 import com.example.tuze.bluecollar.model.Position;
@@ -24,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -33,6 +36,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by tugce.
@@ -74,24 +78,48 @@ public class ApplicantsSwipeDeckAdapter extends BaseAdapter {
         TextView tvTitle=(TextView) convertView.findViewById(R.id.tvApplicantTitle);
         TextView tvName=(TextView)convertView.findViewById(R.id.tvApplicantName);
         TextView tvLookingFor=(TextView)convertView.findViewById(R.id.tvLookingFor);
-        RecyclerView rvPhotos=(RecyclerView)convertView.findViewById(R.id.rvPhotos);
-        ArrayList<String> photoLinkList=new ArrayList<String>();
+        final RecyclerView rvPhotos=(RecyclerView)convertView.findViewById(R.id.rvPhotos);
+        final ArrayList<String> photoLinkList=new ArrayList<String>();
 
 
-        photoLinkList.add("https://s20.postimg.org/p02mtq119/image.jpg");
+        Query queryPosition = FirebaseDatabase.getInstance().getReference().child("user").orderByChild("name").equalTo(applicants.get(position).getName());
+        queryPosition.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    Iterable<DataSnapshot> snapshots=dataSnapshot.child("photos").getChildren();
+                    Iterator<DataSnapshot> iterator=snapshots.iterator();
+                    while(iterator.hasNext()){
+                        String link=iterator.next().getValue().toString();
+                        photoLinkList.add(link);
+
+                    }
+
+                PhotosCardAdapter photosCardAdapter=new PhotosCardAdapter(mContext,photoLinkList);
+                rvPhotos.setAdapter(photosCardAdapter);
+                GridLayoutManager gridLayoutManager =
+                        new GridLayoutManager(mContext,4);
+                rvPhotos.setLayoutManager(gridLayoutManager);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Log.e(TAG, "onCancelled", databaseError.toException());
+            }
+        });
+
+
+       /* photoLinkList.add("https://s20.postimg.org/p02mtq119/image.jpg");
         photoLinkList.add("https://s20.postimg.org/e1rdbjcfx/image.jpg");
         photoLinkList.add("https://s20.postimg.org/kthsee1fh/image.jpg");
         photoLinkList.add("https://s20.postimg.org/nouvl95fh/image.jpg");
         photoLinkList.add("https://s20.postimg.org/dp4kj3jjx/image.jpg");
         photoLinkList.add("https://s20.postimg.org/n0m12b6pp/d15.jpg");
         photoLinkList.add("https://s20.postimg.org/8ldauw8fx/d11.jpg");
-        photoLinkList.add("https://s20.postimg.org/d5zh9ts59/d12.jpg");
+        photoLinkList.add("https://s20.postimg.org/d5zh9ts59/d12.jpg");*/
 
-        PhotosCardAdapter photosCardAdapter=new PhotosCardAdapter(mContext,photoLinkList);
-        rvPhotos.setAdapter(photosCardAdapter);
-        GridLayoutManager gridLayoutManager =
-                new GridLayoutManager(mContext,4);
-        rvPhotos.setLayoutManager(gridLayoutManager);
+
+
 
 
         /*final DatabaseReference refPhotos=FirebaseDatabase.getInstance().getReference().child("user").child(applicants.get(position).getUserId()).child("photos");

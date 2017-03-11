@@ -119,6 +119,7 @@ public class SwipeDeckAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 final String key = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.APPLICATIONS).push().getKey();
+                application.setApplicationReference(key);
                 FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.APPLICATIONS).child(key).setValue(application);
                 mContext.startActivity(new Intent(mContext, HomeActivity.class).putExtra(AppConstants.USER, Parcels.wrap(user)));
             }

@@ -12,11 +12,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import com.daprlabs.cardstack.SwipeDeck;
 import com.example.tuze.bluecollar.adapters.ApplicantsSwipeDeckAdapter;
+import com.example.tuze.bluecollar.adapters.ApplicationsAdapter;
 import com.example.tuze.bluecollar.adapters.SwipeDeckAdapter;
 import com.example.tuze.bluecollar.constants.AppConstants;
 import com.example.tuze.bluecollar.constants.FirebaseConstants;
+import com.example.tuze.bluecollar.model.Application;
 import com.example.tuze.bluecollar.model.Position;
 import com.example.tuze.bluecollar.R;
 import com.example.tuze.bluecollar.model.User;
@@ -25,18 +30,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    //private RecyclerView rvPositions;
     private static final String TAG = "HomeActivity";
     @BindView(R.id.swipeDeck)
     SwipeDeck cardStack;
@@ -46,6 +54,13 @@ public class HomeActivity extends AppCompatActivity
     DrawerLayout drawer;
     @BindView(R.id.navView)
     NavigationView navigationView;
+    CircleImageView ivProfile;
+    TextView tvName;
+    TextView tvEmail;
+    TextView tvSavedJobsApplicantsCount;
+    TextView tvApplicationsCount;
+    TextView tvApplications;
+    TextView tvSavedJobsApplicants;
     private SwipeDeckAdapter positionsAdapter;
     private ApplicantsSwipeDeckAdapter jobSeekerAdapter;
     private ArrayList<Position> positions;
@@ -61,26 +76,26 @@ public class HomeActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-       // getSupportActionBar().setIcon(R.mipmap.title);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_homescreen);
+        positions = new ArrayList<Position>();
+        jobSeekers = new ArrayList<User>();
 
         //getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.login_background));
 
+        user = (User) Parcels.unwrap(getIntent().getParcelableExtra(AppConstants.USER));
 
-        user=(User) Parcels.unwrap(getIntent().getParcelableExtra(AppConstants.USER));
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        //rvPositions=(RecyclerView) findViewById(R.id.rvPositions);
-        positions = new ArrayList<Position>();
-        jobSeekers = new ArrayList<User>();
+        //Set header views
+        View header=navigationView.getHeaderView(0);
+        setViews(header,user);
 
         if (user.getType() == 1) {
+            navigationView.inflateMenu(R.menu.job_seeker_menu);
             DatabaseReference mListItemRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSITIONS);
 
             mListItemRef.addValueEventListener(new ValueEventListener() {
@@ -94,7 +109,7 @@ public class HomeActivity extends AppCompatActivity
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
                 }
 
             });
@@ -102,6 +117,7 @@ public class HomeActivity extends AppCompatActivity
             cardStack.setAdapter(positionsAdapter);
 
         } else {
+            navigationView.inflateMenu(R.menu.employeer_menu);
             DatabaseReference mListItemRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USER);
 
             mListItemRef.addValueEventListener(new ValueEventListener() {
@@ -124,6 +140,88 @@ public class HomeActivity extends AppCompatActivity
             cardStack.setAdapter(jobSeekerAdapter);
 
         }
+    }
+
+    private void setViews(View header,final User user){
+        ivProfile=(CircleImageView)header.findViewById(R.id.ivProfile);
+        tvName=(TextView)header.findViewById(R.id.tvName);
+        tvEmail=(TextView)header.findViewById(R.id.tvEmail);
+        tvApplicationsCount=(TextView)header.findViewById(R.id.tvApplicationsCount);
+        tvApplications=(TextView)header.findViewById(R.id.tvApplications);
+        tvSavedJobsApplicants=(TextView)header.findViewById(R.id.tvSavedJobsApplicants);
+        tvSavedJobsApplicantsCount=(TextView) header.findViewById(R.id.tvSavedJobsApplicantsCount);
+
+        Picasso.with(this).load(user.getProfileImage()).into(ivProfile);
+        tvName.setText(user.getName());
+        tvEmail.setText(user.getEmail());
+        if(user.getType()==1) {
+            tvSavedJobsApplicants.setText("Saved Jobs");
+            tvApplications.setText("My Applications");
+
+            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            Query query = ref.child("applications").orderByChild("userId").equalTo(user.getEmail());
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final ArrayList<Position> positions=new ArrayList<Position>();
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        Application application = userSnapshot.getValue(Application.class);
+                        Query queryPosition = ref.child("positions").orderByChild("positionReference").equalTo(application.getPositionReference());
+
+                        queryPosition.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                                    Position position = userSnapshot.getValue(Position.class);
+                                    positions.add(position);
+                                }
+                                tvApplicationsCount.setText(""+positions.size());
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.e(TAG, "onCancelled", databaseError.toException());
+                            }
+                        });
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled", databaseError.toException());
+                }
+            });
+        }
+        else{
+            tvSavedJobsApplicants.setText("Saved Applicants");
+            tvApplications.setText("Created Jobs");
+            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            Query queryPosition = ref.child("positions").orderByChild("companyName").equalTo(user.getName());
+            queryPosition.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                   ArrayList<Position> positions=new ArrayList<Position>();
+
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+
+                        Position position = userSnapshot.getValue(Position.class);
+                        if (position.getCompanyName().equals(user.getName())) {
+                            positions.add(position);
+                        }
+                    }
+                    tvApplicationsCount.setText(""+positions.size());
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled", databaseError.toException());
+                }
+            });
+        }
+
     }
 
     @Override
