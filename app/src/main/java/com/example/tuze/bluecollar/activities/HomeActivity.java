@@ -240,6 +240,25 @@ public class HomeActivity extends AppCompatActivity
                     Log.e(TAG, "onCancelled", databaseError.toException());
                 }
             });
+
+
+            Query querySavedItems = ref.child("user").orderByChild("userId").equalTo(user.getUserId());
+            querySavedItems.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        tvSavedJobsApplicantsCount.setText("" + userSnapshot.child("savedJobs").getChildrenCount());
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled", databaseError.toException());
+                }
+            });
+
         } else {
             tvSavedJobsApplicants.setText("Saved Applicants");
             tvApplications.setText("Created Jobs");
@@ -259,6 +278,21 @@ public class HomeActivity extends AppCompatActivity
                     }
                     tvApplicationsCount.setText("" + positions.size());
 
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "onCancelled", databaseError.toException());
+                }
+            });
+
+            Query querySavedItems = ref.child("user").orderByChild("userId").equalTo(user.getUserId());
+            querySavedItems.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        tvSavedJobsApplicantsCount.setText("" + userSnapshot.child("savedApplicants").getChildrenCount());
+                    }
                 }
 
                 @Override
@@ -334,8 +368,7 @@ public class HomeActivity extends AppCompatActivity
                         Log.e(TAG, getString(R.string.onCancelled), databaseError.toException());
                     }
                 });
-            }
-            else if(user.getType()==2){
+            } else if (user.getType() == 2) {
                 final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 final List<User> applicants = new ArrayList<User>();
 
