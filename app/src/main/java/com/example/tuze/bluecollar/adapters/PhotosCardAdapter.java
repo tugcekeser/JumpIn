@@ -1,7 +1,9 @@
 package com.example.tuze.bluecollar.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +65,9 @@ public class PhotosCardAdapter extends RecyclerView.Adapter<PhotosCardAdapter.Ph
             Intent intent = new Intent(mContext, ZoomImageActivity.class);
             // Pass data object in the bundle and populate details activity.
             intent.putExtra("ImageLink", photos.get(getAdapterPosition()));
-            mContext.startActivity(intent);
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation((Activity)mContext, (View)ivImage, "image");
+            mContext.startActivity(intent,options.toBundle());
         }
     }
 

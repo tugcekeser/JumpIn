@@ -1,5 +1,6 @@
 package com.example.tuze.bluecollar.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,6 +39,6 @@ public class ZoomImageActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         int id=view.getId();
         if(id==R.id.btnDone)
-            supportFinishAfterTransition();
+          supportFinishAfterTransition();
     }
 }
