@@ -28,6 +28,7 @@ The following **required** functionality is completed:
 ## Image Walkthrough
 
 Here's a walkthrough of implemented user stories:
+
 <img src='https://cloud.githubusercontent.com/assets/17666583/23828300/01d35360-0683-11e7-9aa5-f35cfa370c5a.png' title='Walkthrough' width='' alt='Video Walkthrough' />
 <img src='https://cloud.githubusercontent.com/assets/17666583/23828301/038093d0-0683-11e7-8555-b91eb23fb7ab.png' title='Walkthrough' width='' alt='Video Walkthrough' />
 <img src='https://cloud.githubusercontent.com/assets/17666583/23828302/052d999e-0683-11e7-8291-e7e964179aa0.png' title='Walkthrough' width='' alt='Video Walkthrough' />
